@@ -8,7 +8,7 @@ export const fallbackProducts: Product[] = [
     price: 129.99,
     oldPrice: 169.99,
     currency: "USD",
-    image: "https://images.unsplash.com/photo-1590658165737-15a047b0d41d?w=900",
+    image: "/aeropods-max.png",
     category: "Audio",
     store: "pulse-gear",
     inStock: true,

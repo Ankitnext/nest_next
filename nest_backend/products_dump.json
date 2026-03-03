@@ -1,0 +1,47 @@
+[
+  {
+    "id": 900003,
+    "trnum": "VEN_0015-0001",
+    "name": "Vendor Laptop",
+    "description": "A great vendor laptop",
+    "price": 599,
+    "oldPrice": 699,
+    "currency": "USD",
+    "image": "https://www.apple.com/v/macbook-pro/aj/images/meta/macbook-pro-14-and-16__9reosvksqzeu_og.png",
+    "category": "Electronics",
+    "store": "testvendor",
+    "inStock": true,
+    "rating": 4,
+    "stockCount": 10
+  },
+  {
+    "id": 900002,
+    "trnum": "VEN_0011-0001",
+    "name": "Raymond Watch",
+    "description": "A New Collection Diamond Screen Watch",
+    "price": 200,
+    "oldPrice": 189,
+    "currency": "USD",
+    "image": "https://www.titan.co.in/dw/image/v2/BKDD_PRD/on/demandware.static/-/Sites-titan-master-catalog/default/dwbd8e8365/images/Titan/Catalog/90110WL04_1.jpg?sw=360&sh=360",
+    "category": "Utensils",
+    "store": "vendor",
+    "inStock": true,
+    "rating": 4,
+    "stockCount": 20
+  },
+  {
+    "id": 900001,
+    "trnum": "VEN_0010-0001",
+    "name": "Test Headphones Pro",
+    "description": "Premium noise cancelling headphones",
+    "price": 149.99,
+    "oldPrice": 199.99,
+    "currency": "USD",
+    "image": "https://picsum.photos/seed/vendor-product/900/600",
+    "category": "Audio",
+    "store": "test-vendor-store",
+    "inStock": true,
+    "rating": 4,
+    "stockCount": 25
+  }
+]

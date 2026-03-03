@@ -1,12 +1,36 @@
+"use client";
+
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+
 export function AdminTopbar() {
+  const { userName, logout } = useAuth();
+  const router = useRouter();
+
+  function handleLogout() {
+    logout();
+    router.push("/login");
+  }
+
   return (
-    <div className="rounded-2xl border border-slate-700 bg-slate-900/80 p-4">
-      <p className="text-xs uppercase tracking-[0.2em] text-emerald-300">Control Center</p>
-      <h1 className="mt-2 text-2xl font-semibold text-slate-100">Marketplace Administration</h1>
-      <p className="mt-2 text-sm text-slate-300">
-        Review onboarding requests, monitor stores, and optimize campaigns.
-      </p>
+    <div className="flex items-center justify-between rounded-2xl border border-slate-700 bg-slate-900/80 px-5 py-4">
+      <div>
+        <p className="text-xs uppercase tracking-[0.2em] text-emerald-300">Control Center</p>
+        <h1 className="mt-1 text-xl font-semibold text-slate-100">Marketplace Administration</h1>
+      </div>
+      <div className="flex items-center gap-3">
+        <Link href="/" className="rounded-lg px-3 py-1.5 text-sm text-slate-400 transition hover:text-emerald-300">
+          🏠 Home
+        </Link>
+        <span className="text-xs text-slate-500">{userName ?? "Admin"}</span>
+        <button
+          onClick={handleLogout}
+          className="rounded-full border border-rose-500/40 px-4 py-1.5 text-sm text-rose-400 transition hover:bg-rose-500/10 hover:border-rose-400"
+        >
+          Logout
+        </button>
+      </div>
     </div>
   );
 }
-

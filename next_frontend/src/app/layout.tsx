@@ -14,7 +14,7 @@ const bodyFont = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "NovaCart | Modern Commerce",
+  title: "Baazaarse | Modern Commerce",
   description:
     "A full-stack e-commerce starter powered by Next.js + NestJS with JSON APIs.",
 };

@@ -13,8 +13,11 @@ export function ProductCard({ product }: ProductCardProps) {
         <img src={product.image} alt={product.name} className="h-44 w-full object-cover" />
       </Link>
       <div className="space-y-2 p-4">
-        <p className="text-xs uppercase tracking-[0.2em] text-slate-400">{product.category}</p>
-        <Link href={`/product/${product.id}`} className="line-clamp-1 text-base font-semibold text-slate-100">
+        <div className="flex items-center justify-between">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-400">{product.category}</p>
+          <p className="text-xs text-slate-500 font-medium">🏪 {product.store}</p>
+        </div>
+        <Link href={`/product/${product.id}`} className="line-clamp-1 text-base font-semibold text-slate-100 mt-1 block hover:text-emerald-300 transition">
           {product.name}
         </Link>
         <p className="line-clamp-2 text-sm text-slate-300">{product.description}</p>

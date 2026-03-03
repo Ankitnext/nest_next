@@ -15,14 +15,14 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
     <section className="space-y-6">
       <div className="text-center">
         <p className="text-xs uppercase tracking-[0.22em] text-emerald-300">
-          NovaCart Access
+          Baazaarse Access
         </p>
         <h1 className="mt-2 text-3xl font-semibold text-slate-100">
           Login or Create Account
         </h1>
         <p className="mt-2 text-sm text-slate-300">
           {safeRedirect === "/shop"
-            ? "Login to unlock the full NovaCart shop experience."
+            ? "Login to unlock the full Baazaarse shop experience."
             : "Connected to NestJS auth endpoints backed by Neon PostgreSQL."}
         </p>
       </div>

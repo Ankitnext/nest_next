@@ -9,39 +9,76 @@ import {
   type ReactNode,
 } from "react";
 
+type Role = "user" | "vendor" | "admin" | null;
+
 interface AuthContextValue {
   isLoggedIn: boolean;
+  role: Role;
+  userStore: string | null;
+  userName: string | null;
+  token: string | null;
   login: (token: string) => void;
   logout: () => void;
+}
+
+/** Decode JWT payload without a library (base64url → JSON) */
+function parseJwt(token: string): Record<string, unknown> {
+  try {
+    const base64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+    return JSON.parse(atob(base64)) as Record<string, unknown>;
+  } catch {
+    return {};
+  }
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [role, setRole] = useState<Role>(null);
+  const [userStore, setUserStore] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string | null>(null);
+  const [tokenStr, setTokenStr] = useState<string | null>(null);
 
-  // Read cookie on first render (client-side only)
-  useEffect(() => {
-    setIsLoggedIn(document.cookie.includes("novacart_token="));
-  }, []);
-
-  const login = useCallback((token: string) => {
-    // Persist in both cookie (for middleware) and localStorage (for API calls)
-    document.cookie = `novacart_token=${token}; path=/; SameSite=Lax`;
-    localStorage.setItem("novacart_token", token);
-    // Update context state immediately — no reload needed
+  const applyToken = useCallback((token: string) => {
+    const payload = parseJwt(token);
     setIsLoggedIn(true);
+    setRole((payload.role as Role) ?? "user");
+    setUserStore((payload.store as string) ?? null);
+    setUserName((payload.name as string) ?? null);
+    setTokenStr(token);
   }, []);
+
+  // Hydrate from cookie on first render
+  useEffect(() => {
+    const match = document.cookie.match(/(?:^|;\s*)novacart_token=([^;]+)/);
+    if (match) applyToken(match[1]);
+  }, [applyToken]);
+
+  const login = useCallback(
+    (token: string) => {
+      document.cookie = `novacart_token=${token}; path=/; SameSite=Lax`;
+      localStorage.setItem("novacart_token", token);
+      applyToken(token);
+    },
+    [applyToken],
+  );
 
   const logout = useCallback(() => {
     document.cookie =
       "novacart_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
     localStorage.removeItem("novacart_token");
     setIsLoggedIn(false);
+    setRole(null);
+    setUserStore(null);
+    setUserName(null);
+    setTokenStr(null);
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
+    <AuthContext.Provider
+      value={{ isLoggedIn, role, userStore, userName, token: tokenStr, login, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );

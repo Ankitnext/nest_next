@@ -3,101 +3,69 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import { PageContainer } from "@/components/PageContainer";
-
-// Items only visible to authenticated users
-const authNavItems = [
-  { href: "/shop", label: "Shop" },
-  { href: "/pricing", label: "Pricing" },
-  { href: "/orders", label: "Orders" },
-  { href: "/create-store", label: "Sell on NovaCart" },
-];
 
 export function PublicNavbar() {
+  const { isLoggedIn, role, userName, logout } = useAuth();
   const router = useRouter();
-  const { isLoggedIn, logout } = useAuth();
 
   function handleLogout() {
     logout();
     router.push("/");
-    router.refresh();
   }
 
+  const dashboardHref = role === "admin" ? "/admin" : role === "vendor" ? "/store" : null;
+
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--line)]/80 bg-[#070d1d]/80 backdrop-blur">
-      <PageContainer className="flex h-16 items-center justify-between">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
-          <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-400 font-bold text-slate-950">
-            N
-          </span>
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-300">
-              NovaCart
-            </p>
-            <p className="text-xs text-slate-300">Modern commerce engine</p>
-          </div>
-        </Link>
+    <nav className="flex items-center justify-between rounded-2xl border border-slate-700/60 bg-slate-900/80 px-4 py-3 backdrop-blur">
+      {/* Logo */}
+      <Link href="/" className="flex items-center gap-2">
+        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-400 text-sm font-bold text-slate-950">
+          N
+        </span>
+        <span className="font-semibold text-slate-100">BAAZAARSE</span>
+      </Link>
 
-        {/* Nav links */}
-        <nav className="hidden items-center gap-6 text-sm text-slate-200 md:flex">
-          {/* Home always visible */}
-          <Link href="/" className="transition hover:text-emerald-300">
-            Home
+      {/* Links */}
+      <div className="flex items-center gap-1 text-sm">
+        <Link href="/" className="rounded-lg px-3 py-1.5 text-slate-300 transition hover:text-emerald-300">Home</Link>
+
+        <Link href="/shop"    className="rounded-lg px-3 py-1.5 text-slate-300 transition hover:text-emerald-300">Shop</Link>
+        <Link href="/pricing" className="rounded-lg px-3 py-1.5 text-slate-300 transition hover:text-emerald-300">Pricing</Link>
+
+        {isLoggedIn && role === "user" && (
+          <>
+            <Link href="/orders"  className="rounded-lg px-3 py-1.5 text-slate-300 transition hover:text-emerald-300">Orders</Link>
+            <Link href="/create-store" className="rounded-lg px-3 py-1.5 text-slate-300 transition hover:text-emerald-300">Sell on Baazaarse</Link>
+          </>
+        )}
+
+        {isLoggedIn && (role === "vendor" || role === "admin") && dashboardHref && (
+          <Link href={dashboardHref} className="rounded-lg px-3 py-1.5 text-emerald-300 font-semibold transition hover:text-emerald-200">
+            {role === "admin" ? "🛡️ Admin" : "🏪 Dashboard"}
           </Link>
+        )}
 
-          {/* Protected links — shown only when logged in */}
-          {isLoggedIn &&
-            authNavItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="transition hover:text-emerald-300"
-              >
-                {item.label}
+        {isLoggedIn ? (
+          <>
+            {role === "user" && (
+              <Link href="/cart"
+                className="rounded-full border border-slate-500 px-4 py-1.5 text-slate-100 transition hover:border-emerald-300 hover:text-emerald-300">
+                Cart
               </Link>
-            ))}
-
-          {/* Login / Logout toggle */}
-          {isLoggedIn ? (
-            <button
-              onClick={handleLogout}
-              className="transition hover:text-rose-300 text-slate-200"
-            >
+            )}
+            <span className="ml-2 text-xs text-slate-500">{userName}</span>
+            <button onClick={handleLogout}
+              className="ml-1 rounded-full border border-rose-500/40 px-4 py-1.5 text-sm text-rose-400 transition hover:bg-rose-500/10">
               Logout
             </button>
-          ) : (
-            <Link href="/login" className="transition hover:text-emerald-300">
-              Login
-            </Link>
-          )}
-        </nav>
-
-        {/* Right-side CTA — only when logged in */}
-        {isLoggedIn ? (
-          <div className="flex items-center gap-3">
-            <Link
-              href="/cart"
-              className="rounded-full border border-slate-500 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-slate-100 transition hover:border-emerald-400 hover:text-emerald-300"
-            >
-              Cart
-            </Link>
-            <Link
-              href="/shop"
-              className="rounded-full bg-emerald-400 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-slate-950 transition hover:bg-emerald-300"
-            >
-              Explore
-            </Link>
-          </div>
+          </>
         ) : (
-          <Link
-            href="/login"
-            className="rounded-full bg-emerald-400 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-slate-950 transition hover:bg-emerald-300"
-          >
+          <Link href="/login"
+            className="ml-2 rounded-full bg-emerald-400 px-4 py-1.5 text-sm font-semibold text-slate-950 transition hover:bg-emerald-300">
             Login
           </Link>
         )}
-      </PageContainer>
-    </header>
+      </div>
+    </nav>
   );
 }
