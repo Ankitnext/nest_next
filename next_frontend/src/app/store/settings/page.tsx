@@ -10,7 +10,10 @@ export default function VendorSettings() {
   const router = useRouter();
   
   const [settings, setSettings] = useState<VSType>({
-    payment_policy: "pay_after",
+    policy_delivery: "pay_after",
+    policy_pickup: "pay_after",
+    policy_table: "pay_after",
+    policy_queue: "pay_after",
     allow_delivery: true,
     allow_pickup: true,
     allow_table: true,
@@ -94,67 +97,48 @@ export default function VendorSettings() {
       </div>
 
       <div className="rounded-2xl border border-slate-700/60 bg-slate-900/40 p-6 md:p-8 relative">
-        <h2 className="text-lg font-semibold text-slate-100 mb-4">Payment Policy</h2>
+        <h2 className="text-lg font-semibold text-slate-100 mb-4">Payment Policies</h2>
         <p className="text-sm text-slate-400 mb-6 max-w-xl">
-          Choose how users interact with your store during checkout. You can require payment upfront before an order is generated, or you can allow immediate order creation and accept payment later.
+          Choose the payment policy for each fulfillment method individually.
         </p>
 
-        <div className="space-y-4">
-          <label
-            className={`flex cursor-pointer items-start gap-4 rounded-xl border p-4 transition ${
-              settings.payment_policy === "pay_after"
-                ? "border-cyan-400 bg-cyan-400/10"
-                : "border-slate-700 bg-slate-800/50 hover:border-slate-500"
-            }`}
-          >
-            <div className="flex h-5 items-center mt-0.5">
-              <input
-                type="radio"
-                name="payment_policy"
-                value="pay_after"
-                checked={settings.payment_policy === "pay_after"}
-                onChange={() => handleSaveSettings({ payment_policy: "pay_after" })}
-                disabled={saving}
-                className="h-4 w-4 text-cyan-400 focus:ring-cyan-400 border-slate-600 bg-slate-900 cursor-pointer"
-              />
+        <div className="grid md:grid-cols-2 gap-6">
+          {[
+            { key: "policy_delivery", title: "Delivery" },
+            { key: "policy_pickup", title: "Pickup" },
+            { key: "policy_table", title: "On Table" },
+            { key: "policy_queue", title: "In Queue" }
+          ].map(opt => (
+            <div key={opt.key} className="space-y-3 p-4 rounded-xl border border-slate-700/50 bg-slate-800/30">
+              <h3 className="font-semibold text-slate-200">{opt.title} Payment</h3>
+              <div className="flex gap-4">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name={opt.key}
+                    value="pay_after"
+                    checked={settings[opt.key as keyof VSType] === "pay_after"}
+                    onChange={() => handleSaveSettings({ [opt.key]: "pay_after" })}
+                    disabled={saving}
+                    className="h-4 w-4 text-cyan-400 focus:ring-cyan-400 border-slate-600 bg-slate-900 cursor-pointer"
+                  />
+                  <span className={`text-sm ${settings[opt.key as keyof VSType] === "pay_after" ? "text-cyan-300 font-semibold" : "text-slate-300"}`}>Pay After</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name={opt.key}
+                    value="pay_before"
+                    checked={settings[opt.key as keyof VSType] === "pay_before"}
+                    onChange={() => handleSaveSettings({ [opt.key]: "pay_before" })}
+                    disabled={saving}
+                    className="h-4 w-4 text-cyan-400 focus:ring-cyan-400 border-slate-600 bg-slate-900 cursor-pointer"
+                  />
+                  <span className={`text-sm ${settings[opt.key as keyof VSType] === "pay_before" ? "text-cyan-300 font-semibold" : "text-slate-300"}`}>Pay Before</span>
+                </label>
+              </div>
             </div>
-            <div>
-              <p className={`font-semibold ${settings.payment_policy === "pay_after" ? "text-cyan-300" : "text-slate-200"}`}>
-                Pay After (Default)
-              </p>
-              <p className="text-sm text-slate-400 mt-1">
-                Customers can place orders immediately. The order number is generated instantly and the payment status remains pending.
-              </p>
-            </div>
-          </label>
-
-          <label
-            className={`flex cursor-pointer items-start gap-4 rounded-xl border p-4 transition ${
-              settings.payment_policy === "pay_before"
-                ? "border-cyan-400 bg-cyan-400/10"
-                : "border-slate-700 bg-slate-800/50 hover:border-slate-500"
-            }`}
-          >
-            <div className="flex h-5 items-center mt-0.5">
-              <input
-                type="radio"
-                name="payment_policy"
-                value="pay_before"
-                checked={settings.payment_policy === "pay_before"}
-                onChange={() => handleSaveSettings({ payment_policy: "pay_before" })}
-                disabled={saving}
-                className="h-4 w-4 text-cyan-400 focus:ring-cyan-400 border-slate-600 bg-slate-900 cursor-pointer"
-              />
-            </div>
-            <div>
-              <p className={`font-semibold ${settings.payment_policy === "pay_before" ? "text-cyan-300" : "text-slate-200"}`}>
-                Pay Before
-              </p>
-              <p className="text-sm text-slate-400 mt-1">
-                Customers must pay upfront. The order is placed in a holding state, and the final order number is not generated until payment is confirmed.
-              </p>
-            </div>
-          </label>
+          ))}
         </div>
       </div>
 

@@ -303,9 +303,10 @@ export class AppController {
     @Headers('authorization') auth: string, 
     @Param('cartItemId', ParseIntPipe) cartItemId: number,
     @Body('paymentMethod') paymentMethod?: string,
+    @Body('fulfillmentType') fulfillmentType: string = 'delivery',
   ) {
     const { sub } = decodeToken(auth);
-    return this.orderService.placeOrder(sub, cartItemId, paymentMethod);
+    return this.orderService.placeOrder(sub, cartItemId, paymentMethod, fulfillmentType);
   }
 
   @Get('orders/priority-queue-count')
@@ -455,7 +456,7 @@ export class AppController {
     const p = decodeToken(auth);
     requireRole(p, 'vendor');
     const [user] = await this.databaseService.query(
-      `SELECT payment_policy, allow_delivery, allow_pickup, allow_table, allow_queue, is_open, store_address FROM users WHERE id = $1`, [p.sub]
+      `SELECT policy_delivery, policy_pickup, policy_table, policy_queue, allow_delivery, allow_pickup, allow_table, allow_queue, is_open, store_address FROM users WHERE id = $1`, [p.sub]
     );
     if (!user) throw new NotFoundException('Vendor not found');
     return user;
@@ -465,7 +466,10 @@ export class AppController {
   async updateVendorSettings(
     @Headers('authorization') auth: string,
     @Body() body: { 
-      policy?: string; 
+      policy_delivery?: string;
+      policy_pickup?: string;
+      policy_table?: string;
+      policy_queue?: string;
       allow_delivery?: boolean; 
       allow_pickup?: boolean; 
       allow_table?: boolean; 
@@ -477,22 +481,30 @@ export class AppController {
     const p = decodeToken(auth);
     requireRole(p, 'vendor');
     
-    if (body.policy && !['pay_before', 'pay_after'].includes(body.policy)) {
-      throw new BadRequestException('policy must be pay_before or pay_after');
+    for (const policy of [body.policy_delivery, body.policy_pickup, body.policy_table, body.policy_queue]) {
+      if (policy && !['pay_before', 'pay_after'].includes(policy)) {
+        throw new BadRequestException('Policies must be pay_before or pay_after');
+      }
     }
 
     await this.databaseService.query(
       `UPDATE users 
-       SET payment_policy = COALESCE($1, payment_policy),
-           allow_delivery = COALESCE($2, allow_delivery),
-           allow_pickup   = COALESCE($3, allow_pickup),
-           allow_table    = COALESCE($4, allow_table),
-           allow_queue    = COALESCE($5, allow_queue),
-           is_open        = COALESCE($6, is_open),
-           store_address  = COALESCE($7, store_address)
-       WHERE id = $8`,
+       SET policy_delivery = COALESCE($1, policy_delivery),
+           policy_pickup   = COALESCE($2, policy_pickup),
+           policy_table    = COALESCE($3, policy_table),
+           policy_queue    = COALESCE($4, policy_queue),
+           allow_delivery  = COALESCE($5, allow_delivery),
+           allow_pickup    = COALESCE($6, allow_pickup),
+           allow_table     = COALESCE($7, allow_table),
+           allow_queue     = COALESCE($8, allow_queue),
+           is_open         = COALESCE($9, is_open),
+           store_address   = COALESCE($10, store_address)
+       WHERE id = $11`,
       [
-        body.policy ?? null, 
+        body.policy_delivery ?? null, 
+        body.policy_pickup ?? null, 
+        body.policy_table ?? null, 
+        body.policy_queue ?? null, 
         body.allow_delivery ?? null, 
         body.allow_pickup ?? null, 
         body.allow_table ?? null, 
@@ -508,7 +520,7 @@ export class AppController {
   @Get('public/vendor/:store/policy')
   async getPublicVendorPolicy(@Param('store') storeName: string) {
     const [user] = await this.databaseService.query(
-      `SELECT payment_policy FROM users WHERE vendor_store = $1 AND role = 'vendor'`,
+      `SELECT policy_delivery, policy_pickup, policy_table, policy_queue FROM users WHERE vendor_store = $1 AND role = 'vendor'`,
       [storeName]
     );
     if (!user) throw new NotFoundException('Vendor not found');
@@ -673,9 +685,9 @@ export class AppController {
       [orderNumber, p.sub, p.store ?? null, prod.id, prod.name, prod.image ?? null,
        parseFloat(prod.price), qty],
     );
-    // Deduct stock
+    // Deduct stock safely (never below 0)
     await this.databaseService.query(
-      `UPDATE market_products SET stock_count = stock_count - $1 WHERE id = $2`,
+      `UPDATE market_products SET stock_count = GREATEST(0, stock_count - $1) WHERE id = $2`,
       [qty, prod.id],
     );
     return order;

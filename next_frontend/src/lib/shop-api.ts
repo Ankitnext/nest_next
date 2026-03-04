@@ -150,7 +150,10 @@ export const getCheckoutFulfillmentOptions = () =>
   apiFetch<CheckoutFulfillmentOptions>(`/checkout/fulfillment-options`, { method: "GET" });
 
 export interface VendorSettings {
-  payment_policy: string;
+  policy_delivery: string;
+  policy_pickup: string;
+  policy_table: string;
+  policy_queue: string;
   allow_delivery: boolean;
   allow_pickup: boolean;
   allow_table: boolean;

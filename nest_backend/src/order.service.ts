@@ -107,7 +107,7 @@ export class OrderService {
   }
 
   /** Convert a cart item into an actual order */
-  async placeOrder(userId: number, cartItemId: number, paymentMethod?: string): Promise<Order> {
+  async placeOrder(userId: number, cartItemId: number, paymentMethod?: string, fulfillmentType: string = 'delivery'): Promise<Order> {
     const cartRows = await this.db.query<CartItemRow>(
       `SELECT * FROM cart WHERE id = $1 AND user_id = $2`,
       [cartItemId, userId],
@@ -115,16 +115,19 @@ export class OrderService {
     if (cartRows.length === 0) throw new NotFoundException('Cart item not found');
     const item = cartRows[0];
     
-    // Determine vendor policy from store name
+    // Determine vendor policy from store name based on fulfillment type
     let policy = 'pay_after';
     const store = item.product_store;
     if (store) {
-       const [v] = await this.db.query<{ payment_policy: string }>(
-         `SELECT payment_policy FROM users WHERE vendor_store = $1 AND role = 'vendor'`,
+       const [v] = await this.db.query<{ policy_delivery: string, policy_pickup: string, policy_table: string, policy_queue: string }>(
+         `SELECT policy_delivery, policy_pickup, policy_table, policy_queue FROM users WHERE vendor_store = $1 AND role = 'vendor'`,
          [store]
        );
-       if (v && v.payment_policy) {
-         policy = v.payment_policy;
+       if (v) {
+         if (fulfillmentType === 'pickup') policy = v.policy_pickup;
+         else if (fulfillmentType === 'table') policy = v.policy_table;
+         else if (fulfillmentType === 'queue') policy = v.policy_queue;
+         else policy = v.policy_delivery;
        }
     }
 
@@ -151,6 +154,18 @@ export class OrderService {
             orderNumber,
           ],
         );
+        
+        // Immediately subtract stock from the vendor if it's a vendor product
+        if (item.product_id >= 900000) {
+          const actualId = item.product_id - 900000;
+          await this.db.query(
+            `UPDATE vendor_products 
+             SET stock_count = GREATEST(0, stock_count - $1) 
+             WHERE id = $2`,
+            [item.quantity, actualId]
+          );
+        }
+        
         break; // success
       } catch (err: unknown) {
         const pgErr = err as { code?: string };
@@ -191,12 +206,15 @@ export class OrderService {
     let policy = 'pay_after';
     const store = cartRows[0].product_store;
     if (store) {
-       const [v] = await this.db.query<{ payment_policy: string }>(
-         `SELECT payment_policy FROM users WHERE vendor_store = $1 AND role = 'vendor'`,
+       const [v] = await this.db.query<{ policy_delivery: string, policy_pickup: string, policy_table: string, policy_queue: string }>(
+         `SELECT policy_delivery, policy_pickup, policy_table, policy_queue FROM users WHERE vendor_store = $1 AND role = 'vendor'`,
          [store]
        );
-       if (v && v.payment_policy) {
-         policy = v.payment_policy;
+       if (v) {
+         if (fulfillmentType === 'pickup') policy = v.policy_pickup;
+         else if (fulfillmentType === 'table') policy = v.policy_table;
+         else if (fulfillmentType === 'queue') policy = v.policy_queue;
+         else policy = v.policy_delivery;
        }
     }
 
@@ -234,6 +252,17 @@ export class OrderService {
               isPriority
             ],
           );
+          
+          // Deduct stock per cart item successfully processed if it's a vendor product
+          if (item.product_id >= 900000) {
+            const actualId = item.product_id - 900000;
+            await this.db.query(
+              `UPDATE vendor_products 
+               SET stock_count = GREATEST(0, stock_count - $1) 
+               WHERE id = $2`,
+              [item.quantity, actualId]
+            );
+          }
         }
         finalOrderNumber = orderNumber ?? '';
         break; // success
