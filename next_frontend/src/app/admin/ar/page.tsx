@@ -157,10 +157,10 @@ export default function AdminArConsole() {
     }
   }
 
-  if (loading) return <p className="p-10 text-slate-400">Loading AR models...</p>;
+  if (loading) return <p className="p-10 text-slate-500">Loading AR models...</p>;
 
   return (
-    <div className="min-h-screen bg-slate-950 p-4 md:p-8 font-sans text-slate-200">
+    <div className="min-h-screen bg-white p-4 md:p-8 font-sans text-slate-800">
       <PublicNavbar />
       
       <div className="mx-auto mt-8 max-w-6xl space-y-8">
@@ -168,7 +168,7 @@ export default function AdminArConsole() {
           <div>
             <Link href="/admin" className="text-sky-400 hover:text-sky-300 text-sm mb-2 inline-block">← Back to Admin</Link>
             <h1 className="text-3xl font-bold tracking-tight text-white">AR/VR Models Console</h1>
-            <p className="text-slate-400">Upload and grant 3D model access to vendors.</p>
+            <p className="text-slate-500">Upload and grant 3D model access to vendors.</p>
           </div>
         </div>
 
@@ -176,19 +176,19 @@ export default function AdminArConsole() {
 
         <div className="grid gap-6 md:grid-cols-3">
           
-          <div className="md:col-span-1 border border-slate-700/60 bg-slate-900/60 p-6 rounded-2xl h-fit">
+          <div className="md:col-span-1 border border-slate-200/60 bg-white/60 p-6 rounded-2xl h-fit">
             <h2 className="text-lg font-bold text-white mb-4">Add New Model</h2>
             <form onSubmit={addModel} className="space-y-4">
               <div>
-                <label className="text-xs font-semibold text-slate-400 mb-1 block">Model Name</label>
+                <label className="text-xs font-semibold text-slate-500 mb-1 block">Model Name</label>
                 <input required value={name} onChange={e => setName(e.target.value)} 
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 outline-none focus:border-sky-400"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 outline-none focus:border-sky-400"
                   placeholder="e.g. 3D Burger Menu" />
               </div>
               <div>
-                <label className="text-xs font-semibold text-slate-400 mb-1 block">.GLB URL (optional)</label>
+                <label className="text-xs font-semibold text-slate-500 mb-1 block">.GLB URL (optional)</label>
                 <input value={url} onChange={e => setUrl(e.target.value)} 
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 outline-none focus:border-sky-400"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 outline-none focus:border-sky-400"
                   placeholder="Leaves blank for default" />
               </div>
               <button className="w-full bg-sky-500 hover:bg-sky-400 text-white font-bold py-2 rounded-xl transition">
@@ -199,11 +199,11 @@ export default function AdminArConsole() {
 
           <div className="md:col-span-2 space-y-4">
             {models.length === 0 ? (
-              <p className="p-8 text-center text-slate-400 border border-dashed border-slate-700 rounded-2xl">No models added yet.</p>
+              <p className="p-8 text-center text-slate-500 border border-dashed border-slate-200 rounded-2xl">No models added yet.</p>
             ) : (
               models.map(m => (
-                <div key={m.id} className="border border-slate-700/60 bg-slate-900/60 p-5 rounded-2xl flex gap-5">
-                  <div className="h-32 w-32 bg-slate-800 rounded-xl flex-shrink-0 flex items-center justify-center overflow-hidden border border-slate-700 relative group">
+                <div key={m.id} className="border border-slate-200/60 bg-white/60 p-5 rounded-2xl flex gap-5">
+                  <div className="h-32 w-32 bg-slate-50 rounded-xl flex-shrink-0 flex items-center justify-center overflow-hidden border border-slate-200 relative group">
                     <ARModelViewerWrapper
                       src={m.model_url}
                       auto-rotate
@@ -233,7 +233,7 @@ export default function AdminArConsole() {
                     </div>
                     
                     <div className="text-sm">
-                      <p className="text-slate-400 font-semibold mb-2">Vendor Access:</p>
+                      <p className="text-slate-500 font-semibold mb-2">Vendor Access:</p>
                       {m.access_list.length === 0 ? (
                         <span className="text-slate-500 italic">No vendors have access.</span>
                       ) : (
@@ -261,9 +261,9 @@ export default function AdminArConsole() {
       </div>
 
       {showGrant && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
-          <div className="bg-slate-900 border border-slate-700 p-6 rounded-2xl w-full max-w-sm relative shadow-2xl">
-            <button onClick={() => setShowGrant(null)} className="absolute top-4 right-4 text-slate-400 hover:text-white">✕</button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm p-4">
+          <div className="bg-white border border-slate-200 p-6 rounded-2xl w-full max-w-sm relative shadow-2xl">
+            <button onClick={() => setShowGrant(null)} className="absolute top-4 right-4 text-slate-500 hover:text-white">✕</button>
             <h3 className="text-lg font-bold text-white mb-4">Grant Access</h3>
             <form onSubmit={grantAccess} className="flex flex-col gap-4">
               <div className="relative z-50">
@@ -282,24 +282,24 @@ export default function AdminArConsole() {
         </div>
       )}
       {editingModel && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
-          <div className="bg-slate-900 border border-slate-700 p-6 rounded-2xl w-full max-w-sm relative shadow-2xl">
-            <button onClick={() => setEditingModel(null)} className="absolute top-4 right-4 text-slate-400 hover:text-white">✕</button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm p-4">
+          <div className="bg-white border border-slate-200 p-6 rounded-2xl w-full max-w-sm relative shadow-2xl">
+            <button onClick={() => setEditingModel(null)} className="absolute top-4 right-4 text-slate-500 hover:text-white">✕</button>
             <h3 className="text-lg font-bold text-white mb-4">Edit AR Model</h3>
             <form onSubmit={updateModel} className="flex flex-col gap-4">
               <div>
-                <label className="text-xs font-semibold text-slate-400 mb-1 block">Model Name</label>
+                <label className="text-xs font-semibold text-slate-500 mb-1 block">Model Name</label>
                 <input required value={editName} onChange={e => setEditName(e.target.value)} 
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 outline-none focus:border-amber-400 text-slate-200"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 outline-none focus:border-amber-400 text-slate-800"
                 />
               </div>
               <div>
-                <label className="text-xs font-semibold text-slate-400 mb-1 block">.GLB URL</label>
+                <label className="text-xs font-semibold text-slate-500 mb-1 block">.GLB URL</label>
                 <input required value={editUrl} onChange={e => setEditUrl(e.target.value)} 
-                  className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 outline-none focus:border-amber-400 text-slate-200"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 outline-none focus:border-amber-400 text-slate-800"
                 />
               </div>
-              <button className="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2 rounded-xl transition mt-2">
+              <button className="w-full bg-amber-500 hover:bg-amber-400 text-white font-bold py-2 rounded-xl transition mt-2">
                 Save Changes
               </button>
             </form>

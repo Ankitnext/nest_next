@@ -65,7 +65,7 @@ export default function ProductDetailsPage({ params }: ProductPageProps) {
 
   if (!product) {
     return (
-      <div className="flex h-64 items-center justify-center text-slate-400">
+      <div className="flex h-64 items-center justify-center text-slate-500">
         Loading product…
       </div>
     );
@@ -73,21 +73,21 @@ export default function ProductDetailsPage({ params }: ProductPageProps) {
 
   return (
     <section className="space-y-8">
-      <div className="grid gap-6 rounded-3xl border border-slate-700 bg-slate-900/80 p-5 md:grid-cols-2 md:p-8">
+      <div className="grid gap-6 rounded-3xl border border-slate-200 bg-white/80 p-5 md:grid-cols-2 md:p-8">
         <img
           src={product.image}
           alt={product.name}
           className="h-72 w-full rounded-2xl object-cover md:h-full"
         />
         <div className="space-y-4">
-          <p className="text-xs uppercase tracking-[0.2em] text-emerald-300">{product.category}</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-orange-500">{product.category}</p>
           <h1 className="text-3xl font-semibold text-white">{product.name}</h1>
-          <p className="text-slate-300">{product.description}</p>
+          <p className="text-slate-600">{product.description}</p>
           <div className="flex items-end gap-3">
-            <p className="text-2xl font-bold text-emerald-300">{asCurrency(product.price, product.currency)}</p>
-            <p className="text-sm text-slate-400 line-through">{asCurrency(product.oldPrice, product.currency)}</p>
+            <p className="text-2xl font-bold text-orange-500">{asCurrency(product.price, product.currency)}</p>
+            <p className="text-sm text-slate-500 line-through">{asCurrency(product.oldPrice, product.currency)}</p>
           </div>
-          <p className={product.inStock ? "text-sm text-emerald-300" : "text-sm text-rose-300"}>
+          <p className={product.inStock ? "text-sm text-orange-500" : "text-sm text-rose-300"}>
             {product.inStock ? `${product.stockCount} units available` : "Out of stock"}
           </p>
 
@@ -95,7 +95,7 @@ export default function ProductDetailsPage({ params }: ProductPageProps) {
           {feedback && (
             <p className={`rounded-lg px-3 py-2 text-sm ${
               feedback.type === "success"
-                ? "bg-emerald-500/15 text-emerald-300"
+                ? "bg-orange-600/15 text-orange-500"
                 : "bg-rose-500/15 text-rose-300"
             }`}>
               {feedback.msg}
@@ -106,13 +106,13 @@ export default function ProductDetailsPage({ params }: ProductPageProps) {
             <button
               onClick={handleAddToCart}
               disabled={adding || !product.inStock}
-              className="rounded-full bg-emerald-400 px-5 py-2 text-sm font-semibold uppercase tracking-wide text-slate-950 transition hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-full bg-orange-500 px-5 py-2 text-sm font-semibold uppercase tracking-wide text-white transition hover:bg-orange-500 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {adding ? "Adding…" : "Add to Cart"}
             </button>
             <Link
               href="/shop"
-              className="rounded-full border border-slate-500 px-5 py-2 text-sm font-semibold uppercase tracking-wide text-slate-100 transition hover:border-emerald-300 hover:text-emerald-300"
+              className="rounded-full border border-slate-300 px-5 py-2 text-sm font-semibold uppercase tracking-wide text-slate-900 transition hover:border-orange-500 hover:text-orange-500"
             >
               Continue Shopping
             </Link>
@@ -122,7 +122,7 @@ export default function ProductDetailsPage({ params }: ProductPageProps) {
 
       {related.length > 0 && (
         <section className="space-y-4">
-          <h2 className="text-xl font-semibold text-slate-100">Related Products</h2>
+          <h2 className="text-xl font-semibold text-slate-900">Related Products</h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((item) => <ProductCard key={item.id} product={item} />)}
           </div>

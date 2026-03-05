@@ -28,13 +28,13 @@ export default function PublicArViewer({ params }: Props) {
       .finally(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-400">Loading AR View...</div>;
-  if (!model?.model_url) return <div className="min-h-screen bg-slate-950 flex items-center justify-center text-rose-400">Model not found</div>;
+  if (loading) return <div className="min-h-screen bg-white flex items-center justify-center text-slate-500">Loading AR View...</div>;
+  if (!model?.model_url) return <div className="min-h-screen bg-white flex items-center justify-center text-rose-400">Model not found</div>;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex flex-col">
-      <div className="p-4 border-b border-slate-800 bg-slate-900/50 backdrop-blur text-center flex items-center justify-between">
-        <a href="/" className="text-xl font-bold tracking-widest text-emerald-400">N</a>
+    <div className="min-h-screen bg-white text-white flex flex-col">
+      <div className="p-4 border-b border-slate-800 bg-white/50 backdrop-blur text-center flex items-center justify-between">
+        <a href="/" className="text-xl font-bold tracking-widest text-orange-500">N</a>
         <h1 className="font-semibold text-sm">{model.name}</h1>
         <div className="w-8"></div>
       </div>
@@ -51,7 +51,7 @@ export default function PublicArViewer({ params }: Props) {
           environment-image="neutral"
           style={{ width: '100%', height: '100%', minHeight: '500px', backgroundColor: '#020617' }}
         >
-          <button slot="ar-button" className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-white text-slate-950 px-6 py-3 rounded-full font-bold shadow-2xl flex gap-2 items-center">
+          <button slot="ar-button" className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-white text-white px-6 py-3 rounded-full font-bold shadow-2xl flex gap-2 items-center">
             <span>👁️</span> View in your space
           </button>
         </ARModelViewerWrapper>

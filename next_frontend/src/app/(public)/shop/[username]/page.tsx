@@ -27,7 +27,7 @@ export default async function StorefrontPage({ params }: StorePageProps) {
           ))}
         </div>
       ) : (
-        <div className="rounded-2xl border border-slate-700 bg-slate-900/70 p-6 text-sm text-slate-300">
+        <div className="rounded-2xl border border-slate-200 bg-white/70 p-6 text-sm text-slate-600">
           No products found for this store yet.
         </div>
       )}

@@ -60,7 +60,7 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
     const vObj = registeredVendors.find(v => v.store === vendor);
     headingParts.push(`from ${vObj?.name ?? vendor}`);
   }
-  const headingTitle = headingParts.length ? headingParts.join(" ") : "All Products";
+  const headingTitle = headingParts.length ? headingParts.join(" ") : "Full Menu";
 
   return (
     <section className="space-y-5">
@@ -69,10 +69,10 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
         title={headingTitle}
         description={
           vendor
-            ? `Showing products from ${registeredVendors.find(v => v.store === vendor)?.name ?? vendor}${category ? ` in ${category}` : ""}.`
+            ? `Showing menu items from ${registeredVendors.find(v => v.store === vendor)?.name ?? vendor}${category ? ` in ${category}` : ""}.`
             : category
             ? `Filtered by category: ${category}.`
-            : `Browse products from ${registeredVendors.length} registered vendor${registeredVendors.length !== 1 ? "s" : ""}.`
+            : `Browse meals from ${registeredVendors.length} registered kitchen${registeredVendors.length !== 1 ? "s" : ""}.`
         }
       />
 
@@ -94,13 +94,13 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
       </div>
 
       {visibleProducts.length === 0 && (
-        <div className="rounded-2xl border border-slate-700 bg-slate-900/70 p-6 text-center">
+        <div className="rounded-2xl border border-slate-200 bg-white/70 p-6 text-center">
           <p className="text-2xl mb-2">🔍</p>
-          <p className="text-sm text-slate-300">
-            No products found{vendor ? ` for this vendor` : ""}
+          <p className="text-sm text-slate-600">
+            No menu items found{vendor ? ` for this kitchen` : ""}
             {category ? ` in "${category}"` : ""}.
           </p>
-          <a href="/shop" className="mt-3 inline-block text-xs text-emerald-400 hover:underline">
+          <a href="/shop" className="mt-3 inline-block text-xs text-orange-500 hover:underline">
             Clear all filters →
           </a>
         </div>

@@ -17,7 +17,7 @@ const SafeModelViewer = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="absolute inset-0 flex items-center justify-center bg-slate-900 border border-slate-700/50 rounded-xl">
+      <div className="absolute inset-0 flex items-center justify-center bg-white border border-slate-200/50 rounded-xl">
         <span className="text-xs text-slate-500 font-mono tracking-widest uppercase animate-pulse">
           Loading 3D...
         </span>

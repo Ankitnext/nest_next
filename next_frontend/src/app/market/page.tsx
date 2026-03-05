@@ -23,10 +23,10 @@ interface MarketOrder {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  pending:    "bg-slate-600/20 text-slate-300 border-slate-600/40",
+  pending:    "bg-slate-600/20 text-slate-600 border-slate-200/40",
   confirmed:  "bg-blue-500/20 text-blue-300 border-blue-500/40",
   shipped:    "bg-orange-500/20 text-orange-300 border-orange-500/40",
-  delivered:  "bg-emerald-500/20 text-emerald-300 border-emerald-500/40",
+  delivered:  "bg-orange-600/20 text-orange-500 border-orange-600/40",
 };
 
 export default function MarketPage() {
@@ -130,7 +130,7 @@ export default function MarketPage() {
   const isAdmin  = role === "admin";
   const isVendor = role === "vendor";
 
-  if (loading) return <div className="flex h-72 items-center justify-center text-slate-400">Loading market…</div>;
+  if (loading) return <div className="flex h-72 items-center justify-center text-slate-500">Loading market…</div>;
   if (!isAdmin && !isVendor) { router.push("/login"); return null; }
 
   return (
@@ -141,8 +141,8 @@ export default function MarketPage() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <p className="text-xs uppercase tracking-widest text-violet-400">B2B Wholesale</p>
-            <h1 className="text-3xl font-bold text-slate-100">Vendor Market</h1>
-            <p className="text-slate-400 text-sm mt-0.5">
+            <h1 className="text-3xl font-bold text-slate-900">Vendor Market</h1>
+            <p className="text-slate-500 text-sm mt-0.5">
               {isAdmin ? "Manage wholesale products & vendor orders" : `Welcome, ${userName} · ${userStore ?? "vendor"}`}
             </p>
           </div>
@@ -150,7 +150,7 @@ export default function MarketPage() {
             <span className="rounded-full border border-violet-400/20 bg-violet-400/10 px-3 py-1.5 text-xs font-semibold text-violet-300">
               {isAdmin ? "🔑 Admin" : "🏪 Vendor"}
             </span>
-            <a href="/store" className="rounded-full border border-slate-600 px-3 py-1.5 text-xs text-slate-400 hover:text-slate-200 transition">
+            <a href="/store" className="rounded-full border border-slate-200 px-3 py-1.5 text-xs text-slate-500 hover:text-slate-800 transition">
               ← Store
             </a>
           </div>
@@ -166,8 +166,8 @@ export default function MarketPage() {
             <button key={t.key} onClick={() => setTab(t.key as typeof tab)}
               className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
                 tab === t.key
-                  ? "bg-violet-400 text-slate-950"
-                  : "border border-slate-600 text-slate-300 hover:border-violet-400 hover:text-violet-300"
+                  ? "bg-violet-400 text-white"
+                  : "border border-slate-200 text-slate-600 hover:border-violet-400 hover:text-violet-300"
               }`}>
               {t.label}
             </button>
@@ -177,7 +177,7 @@ export default function MarketPage() {
         {/* Global feedback */}
         {msg && (
           <div className={`rounded-xl px-4 py-3 text-sm font-medium border ${
-            msgType === "ok" ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/20" : "bg-rose-500/10 text-rose-300 border-rose-500/20"
+            msgType === "ok" ? "bg-orange-600/10 text-orange-500 border-orange-600/20" : "bg-rose-500/10 text-rose-300 border-rose-500/20"
           }`}>{msg}</div>
         )}
 
@@ -185,13 +185,13 @@ export default function MarketPage() {
         {tab === "browse" && (
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {products.length === 0 ? (
-              <div className="col-span-full rounded-2xl border border-slate-700/60 bg-slate-900/60 p-12 text-center">
+              <div className="col-span-full rounded-2xl border border-slate-200/60 bg-white/60 p-12 text-center">
                 <p className="text-3xl mb-2">🏪</p>
-                <p className="text-slate-300 font-medium">No products listed yet</p>
+                <p className="text-slate-600 font-medium">No products listed yet</p>
                 <p className="text-slate-500 text-sm mt-1">{isAdmin ? "Add wholesale products from the Manage tab" : "Check back soon — admin will list products"}</p>
               </div>
             ) : products.map(p => (
-              <div key={p.id} className="rounded-2xl border border-slate-700/60 bg-slate-900/80 overflow-hidden flex flex-col">
+              <div key={p.id} className="rounded-2xl border border-slate-200/60 bg-white/80 overflow-hidden flex flex-col">
                 {p.image
                   ? <img src={p.image} alt={p.name} className="h-44 w-full object-cover" />
                   : <div className="h-44 bg-gradient-to-br from-violet-900/30 to-slate-800 flex items-center justify-center text-4xl">📦</div>
@@ -199,31 +199,31 @@ export default function MarketPage() {
                 <div className="p-4 flex flex-col flex-1 gap-3">
                   <div>
                     <span className="text-[10px] uppercase tracking-widest text-violet-400">{p.category}</span>
-                    <h3 className="font-semibold text-slate-100 mt-0.5">{p.name}</h3>
-                    <p className="text-xs text-slate-400 line-clamp-2 mt-1">{p.description}</p>
+                    <h3 className="font-semibold text-slate-900 mt-0.5">{p.name}</h3>
+                    <p className="text-xs text-slate-500 line-clamp-2 mt-1">{p.description}</p>
                   </div>
                   <div className="flex items-end gap-2">
-                    <span className="text-lg font-bold text-emerald-300">{asCurrency(parseFloat(p.price))}</span>
+                    <span className="text-lg font-bold text-orange-500">{asCurrency(parseFloat(p.price))}</span>
                     {p.old_price && <span className="text-xs text-slate-500 line-through">{asCurrency(parseFloat(p.old_price))}</span>}
                   </div>
-                  <p className={`text-xs font-medium ${p.stock_count > 0 ? "text-emerald-400" : "text-rose-400"}`}>
+                  <p className={`text-xs font-medium ${p.stock_count > 0 ? "text-orange-500" : "text-rose-400"}`}>
                     {p.stock_count > 0 ? `${p.stock_count} units available` : "Out of stock"}
                   </p>
                   {isVendor && (
                     <div className="flex gap-2 mt-auto items-center">
-                      <div className="flex items-center rounded-lg border border-slate-600 overflow-hidden">
+                      <div className="flex items-center rounded-lg border border-slate-200 overflow-hidden">
                         <button onClick={() => setQty(q => ({ ...q, [p.id]: Math.max(1, (q[p.id]??1)-1) }))}
-                          className="px-2.5 py-1 text-slate-300 hover:bg-slate-700 transition text-sm">−</button>
-                        <span className="px-3 py-1 text-sm text-slate-100 min-w-[28px] text-center">{qty[p.id] ?? 1}</span>
+                          className="px-2.5 py-1 text-slate-600 hover:bg-slate-700 transition text-sm">−</button>
+                        <span className="px-3 py-1 text-sm text-slate-900 min-w-[28px] text-center">{qty[p.id] ?? 1}</span>
                         <button onClick={() => setQty(q => ({ ...q, [p.id]: Math.min(p.stock_count, (q[p.id]??1)+1) }))}
-                          className="px-2.5 py-1 text-slate-300 hover:bg-slate-700 transition text-sm">+</button>
+                          className="px-2.5 py-1 text-slate-600 hover:bg-slate-700 transition text-sm">+</button>
                       </div>
                       <button onClick={() => handleBuy(p.id)}
                         disabled={buying === p.id || p.stock_count === 0}
                         className="flex-1 rounded-full bg-violet-500 py-2 text-xs font-bold text-white hover:bg-violet-400 transition disabled:opacity-50">
                         {buying === p.id ? "Ordering…" : "🛒 Buy"}
                       </button>
-                      {isAdmin && <button onClick={() => startEdit(p)} className="rounded-full border border-slate-600 px-3 py-2 text-xs text-slate-400 hover:border-violet-400 hover:text-violet-300 transition">Edit</button>}
+                      {isAdmin && <button onClick={() => startEdit(p)} className="rounded-full border border-slate-200 px-3 py-2 text-xs text-slate-500 hover:border-violet-400 hover:text-violet-300 transition">Edit</button>}
                     </div>
                   )}
                   {isAdmin && (
@@ -242,25 +242,25 @@ export default function MarketPage() {
         {tab === "orders" && (
           <div className="space-y-3">
             {orders.length === 0 ? (
-              <div className="rounded-2xl border border-slate-700/60 bg-slate-900/60 p-10 text-center">
+              <div className="rounded-2xl border border-slate-200/60 bg-white/60 p-10 text-center">
                 <p className="text-3xl mb-2">📋</p>
-                <p className="text-slate-300 font-medium">No orders yet</p>
+                <p className="text-slate-600 font-medium">No orders yet</p>
                 <p className="text-slate-500 text-sm mt-1">{isAdmin ? "Vendor orders will appear here" : "Browse the market and place your first order"}</p>
               </div>
             ) : orders.map(o => {
               const statusColor = STATUS_COLORS[o.status] ?? STATUS_COLORS.pending;
               return (
-                <div key={o.id} className="rounded-2xl border border-slate-700/60 bg-slate-900/80 p-4 flex flex-col sm:flex-row sm:items-center gap-4">
+                <div key={o.id} className="rounded-2xl border border-slate-200/60 bg-white/80 p-4 flex flex-col sm:flex-row sm:items-center gap-4">
                   {o.product_image
                     ? <img src={o.product_image} alt={o.product_name} className="h-14 w-14 rounded-xl object-cover flex-shrink-0" />
                     : <div className="h-14 w-14 rounded-xl bg-violet-900/40 flex items-center justify-center flex-shrink-0 text-xl">📦</div>
                   }
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <p className="font-semibold text-slate-100 truncate">{o.product_name}</p>
+                      <p className="font-semibold text-slate-900 truncate">{o.product_name}</p>
                       <span className="font-mono text-[10px] text-violet-300 bg-violet-400/10 border border-violet-400/30 rounded px-1.5 py-0.5">{o.order_number}</span>
                     </div>
-                    <p className="text-xs text-slate-400">Qty: {o.quantity} · {asCurrency(parseFloat(o.price) * o.quantity)}</p>
+                    <p className="text-xs text-slate-500">Qty: {o.quantity} · {asCurrency(parseFloat(o.price) * o.quantity)}</p>
                     {isAdmin && o.vendor_name && <p className="text-xs text-slate-500">Vendor: {o.vendor_name} ({o.vendor_store})</p>}
                     <p className="text-xs text-slate-500">{new Date(o.ordered_at).toLocaleDateString()}</p>
                   </div>
@@ -272,7 +272,7 @@ export default function MarketPage() {
                       <select
                         defaultValue={o.status}
                         onChange={e => handleOrderStatus(o.id, e.target.value)}
-                        className="rounded-lg border border-slate-600 bg-slate-800 px-2 py-1 text-xs text-slate-200">
+                        className="rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 text-xs text-slate-800">
                         {["pending","confirmed","shipped","delivered"].map(s =>
                           <option key={s} value={s}>{s.charAt(0).toUpperCase()+s.slice(1)}</option>
                         )}
@@ -290,16 +290,16 @@ export default function MarketPage() {
           <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
             {/* Product list */}
             <div className="space-y-3">
-              <h2 className="text-sm uppercase tracking-widest text-slate-400">All Market Products ({products.length})</h2>
+              <h2 className="text-sm uppercase tracking-widest text-slate-500">All Market Products ({products.length})</h2>
               {products.map(p => (
-                <div key={p.id} className="flex items-center gap-3 rounded-2xl border border-slate-700/60 bg-slate-900/60 p-3">
+                <div key={p.id} className="flex items-center gap-3 rounded-2xl border border-slate-200/60 bg-white/60 p-3">
                   {p.image
                     ? <img src={p.image} alt={p.name} className="h-12 w-12 rounded-xl object-cover flex-shrink-0" />
                     : <div className="h-12 w-12 rounded-xl bg-violet-900/30 flex items-center justify-center flex-shrink-0">📦</div>
                   }
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-slate-100 truncate">{p.name}</p>
-                    <p className="text-xs text-slate-400">{asCurrency(parseFloat(p.price))} · Stock: {p.stock_count} · {p.category}</p>
+                    <p className="font-semibold text-slate-900 truncate">{p.name}</p>
+                    <p className="text-xs text-slate-500">{asCurrency(parseFloat(p.price))} · Stock: {p.stock_count} · {p.category}</p>
                   </div>
                   <button onClick={() => startEdit(p)} className="rounded-lg border border-violet-400/30 px-3 py-1 text-xs text-violet-300 hover:bg-violet-400/10 transition">Edit</button>
                   <button onClick={() => handleDelete(p.id)} className="rounded-lg border border-rose-500/30 px-3 py-1 text-xs text-rose-400 hover:bg-rose-500/10 transition">Delete</button>
@@ -308,17 +308,17 @@ export default function MarketPage() {
             </div>
 
             {/* Add / Edit form */}
-            <div className="rounded-2xl border border-slate-700/60 bg-slate-900/60 p-5 space-y-4">
-              <h2 className="font-semibold text-slate-100">{editId ? "✏️ Edit Product" : "➕ Add Product"}</h2>
+            <div className="rounded-2xl border border-slate-200/60 bg-white/60 p-5 space-y-4">
+              <h2 className="font-semibold text-slate-900">{editId ? "✏️ Edit Product" : "➕ Add Product"}</h2>
               {(["name","description","price","old_price","image","category","stock_count"] as const).map(field => (
                 <div key={field} className="space-y-1">
-                  <label className="text-xs text-slate-400 capitalize">{field.replace("_"," ")}</label>
+                  <label className="text-xs text-slate-500 capitalize">{field.replace("_"," ")}</label>
                   {field === "description"
                     ? <textarea value={form[field]} onChange={e => setForm(f => ({...f, [field]: e.target.value}))}
-                        rows={2} className="w-full rounded-lg border border-slate-500 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none focus:border-violet-400 resize-none" />
+                        rows={2} className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-violet-400 resize-none" />
                     : <input type={["price","old_price","stock_count"].includes(field) ? "number" : "text"}
                         value={form[field]} onChange={e => setForm(f => ({...f, [field]: e.target.value}))}
-                        className="w-full rounded-lg border border-slate-500 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none focus:border-violet-400"
+                        className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-violet-400"
                         placeholder={field === "image" ? "https://..." : ""} />
                   }
                 </div>
@@ -330,7 +330,7 @@ export default function MarketPage() {
                 </button>
                 {editId && (
                   <button onClick={() => { setEditId(null); setForm({ name:"", description:"", price:"", old_price:"", image:"", category:"General", stock_count:"10" }); }}
-                    className="rounded-full border border-slate-600 px-4 py-2 text-sm text-slate-400 hover:border-slate-400 transition">
+                    className="rounded-full border border-slate-200 px-4 py-2 text-sm text-slate-500 hover:border-slate-400 transition">
                     Cancel
                   </button>
                 )}

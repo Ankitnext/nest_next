@@ -27,23 +27,23 @@ export function StoreSidebar() {
   return (
     <>
       {/* ── Mobile top-bar ─────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between rounded-2xl border border-slate-700 bg-slate-900/80 px-4 py-3 lg:hidden">
+      <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white/80 px-4 py-3 lg:hidden">
         <div className="flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-400 text-sm font-bold text-slate-950">S</span>
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-400 text-sm font-bold text-white">S</span>
           <div>
-            <p className="text-xs font-semibold text-slate-100">{userName ?? "Vendor"}</p>
+            <p className="text-xs font-semibold text-slate-900">{userName ?? "Vendor"}</p>
             <p className="text-[10px] text-cyan-400">{userStore ?? "My Store"}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Link href="/" className="rounded-lg px-2 py-1 text-xs text-slate-400 hover:text-cyan-300 transition">🏠</Link>
+          <Link href="/" className="rounded-lg px-2 py-1 text-xs text-slate-500 hover:text-cyan-300 transition">🏠</Link>
           <button
             onClick={handleLogout}
             className="rounded-full border border-rose-500/40 px-3 py-1 text-xs text-rose-400 hover:bg-rose-500/10 transition"
           >
             Logout
           </button>
-          <button onClick={() => setOpen(o => !o)} className="rounded-lg p-1.5 text-slate-300 hover:bg-slate-800 transition">
+          <button onClick={() => setOpen(o => !o)} className="rounded-lg p-1.5 text-slate-600 hover:bg-slate-50 transition">
             {open ? "✕" : "☰"}
           </button>
         </div>
@@ -51,11 +51,11 @@ export function StoreSidebar() {
 
       {/* Mobile dropdown nav */}
       {open && (
-        <nav className="rounded-2xl border border-slate-700 bg-slate-900/95 p-3 lg:hidden space-y-1">
+        <nav className="rounded-2xl border border-slate-200 bg-white/95 p-3 lg:hidden space-y-1">
           {links.map(l => (
             <Link key={l.href} href={l.href} onClick={() => setOpen(false)}
               className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition ${
-                path === l.href ? "bg-cyan-400/10 text-cyan-300 font-medium" : "text-slate-300 hover:bg-slate-800 hover:text-cyan-200"
+                path === l.href ? "bg-cyan-400/10 text-cyan-300 font-medium" : "text-slate-600 hover:bg-slate-50 hover:text-cyan-200"
               }`}>
               <span>{l.icon}</span>{l.label}
             </Link>
@@ -64,13 +64,13 @@ export function StoreSidebar() {
       )}
 
       {/* ── Desktop sidebar ────────────────────────────────────────────── */}
-      <aside className="hidden lg:flex flex-col w-64 rounded-2xl border border-slate-700 bg-slate-900/80 p-4 min-h-[400px]">
+      <aside className="hidden lg:flex flex-col w-64 rounded-2xl border border-slate-200 bg-white/80 p-4 min-h-[400px]">
         {/* Brand */}
         <div className="flex items-center gap-2 mb-5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-cyan-400 text-sm font-bold text-slate-950">S</span>
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-cyan-400 text-sm font-bold text-white">S</span>
           <div>
             <p className="text-xs uppercase tracking-[0.15em] text-cyan-300 font-semibold">Seller Workspace</p>
-            <p className="text-[11px] text-slate-400 truncate max-w-[160px]">{userStore ?? "My Store"}</p>
+            <p className="text-[11px] text-slate-500 truncate max-w-[160px]">{userStore ?? "My Store"}</p>
           </div>
         </div>
 
@@ -79,7 +79,7 @@ export function StoreSidebar() {
           {links.map(l => (
             <Link key={l.href} href={l.href}
               className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition ${
-                path === l.href ? "bg-cyan-400/10 text-cyan-300 font-medium" : "text-slate-300 hover:bg-slate-800 hover:text-cyan-200"
+                path === l.href ? "bg-cyan-400/10 text-cyan-300 font-medium" : "text-slate-600 hover:bg-slate-50 hover:text-cyan-200"
               }`}>
               <span className="text-base">{l.icon}</span>{l.label}
             </Link>
@@ -87,8 +87,8 @@ export function StoreSidebar() {
         </nav>
 
         {/* Bottom section — user + logout */}
-        <div className="mt-4 border-t border-slate-700/60 pt-4 space-y-2">
-          <Link href="/" className="flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm text-slate-400 hover:text-cyan-300 transition">
+        <div className="mt-4 border-t border-slate-200/60 pt-4 space-y-2">
+          <Link href="/" className="flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm text-slate-500 hover:text-cyan-300 transition">
             🏠 <span>Go to Home</span>
           </Link>
           <div className="flex items-center justify-between px-3 py-1">

@@ -8,58 +8,32 @@ type HeroSectionProps = {
 
 export function HeroSection({ spotlight }: HeroSectionProps) {
   return (
-    <section className="relative overflow-hidden rounded-3xl border border-slate-700/80 bg-gradient-to-br from-slate-900 via-slate-900 to-teal-950/70 px-6 py-8 md:px-10 md:py-12">
-      <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-cyan-500/20 blur-3xl" />
-      <div className="absolute -bottom-20 left-20 h-64 w-64 rounded-full bg-emerald-400/20 blur-3xl" />
+    <section 
+      className="relative flex flex-col items-center justify-center overflow-hidden rounded-[2rem] bg-cover bg-center px-6 py-24 text-center md:px-10 md:py-32"
+      style={{ backgroundImage: "url('https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2000&auto=format&fit=crop')" }}
+    >
+      <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px]" />
 
-      <div className="relative grid gap-8 md:grid-cols-[1.1fr_0.9fr]">
-        <div>
-          <p className="inline-flex rounded-full border border-emerald-300/40 px-3 py-1 text-xs uppercase tracking-[0.18em] text-emerald-200">
-            New Collection 2026
-          </p>
-          <h1 className="mt-4 text-3xl font-bold leading-tight text-white md:text-5xl">
-            Tech and lifestyle gear that feels premium from day one.
-          </h1>
-          <p className="mt-5 max-w-xl text-base text-slate-200 md:text-lg">
-            Discover curated products with transparent pricing, fast shipping, and trusted sellers.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link
-              href="/shop"
-              className="rounded-full bg-emerald-400 px-6 py-3 text-sm font-semibold uppercase tracking-wide text-slate-950 transition hover:bg-emerald-300"
-            >
-              Shop Now
-            </Link>
-            <Link
-              href="/create-store"
-              className="rounded-full border border-slate-400 px-6 py-3 text-sm font-semibold uppercase tracking-wide text-slate-100 transition hover:border-emerald-300 hover:text-emerald-200"
-            >
-              Become a Seller
-            </Link>
-          </div>
-        </div>
-
-        <div className="grid-halo rounded-2xl border border-slate-600/70 bg-slate-950/70 p-4">
-          <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Spotlight Deal</p>
-          {spotlight ? (
-            <div className="mt-3 space-y-3">
-              <img
-                src={spotlight.image}
-                alt={spotlight.name}
-                className="h-44 w-full rounded-xl object-cover"
-              />
-              <h2 className="text-xl font-semibold text-white">{spotlight.name}</h2>
-              <p className="text-sm text-slate-300">{spotlight.description}</p>
-              <div className="flex items-center gap-3">
-                <strong className="text-emerald-300">{asCurrency(spotlight.price, spotlight.currency)}</strong>
-                <span className="text-sm text-slate-400 line-through">
-                  {asCurrency(spotlight.oldPrice, spotlight.currency)}
-                </span>
-              </div>
-            </div>
-          ) : (
-            <p className="mt-3 text-sm text-slate-300">No spotlight product available.</p>
-          )}
+      <div className="relative z-10 max-w-3xl">
+        <h1 className="text-4xl font-extrabold leading-tight text-white md:text-6xl tracking-tight">
+          Local Shops, Cafe Treats,<br />& Quick Queues
+        </h1>
+        <p className="mx-auto mt-6 max-w-xl text-lg text-slate-200">
+          Discover the best of your neighborhood with seamless delivery, pickup, and smart dining options.
+        </p>
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+          <Link
+            href="/shop"
+            className="rounded-lg bg-orange-500 px-8 py-3.5 text-sm font-bold text-white shadow-lg transition hover:bg-orange-600 hover:shadow-orange-500/25"
+          >
+            Explore Now
+          </Link>
+          <Link
+            href="/create-store"
+            className="rounded-lg bg-white/20 backdrop-blur-md border border-white/30 px-8 py-3.5 text-sm font-bold text-white shadow-lg transition hover:bg-white/30"
+          >
+            Partner With Us
+          </Link>
         </div>
       </div>
     </section>

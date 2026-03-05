@@ -1,7 +1,6 @@
 import { CategoryStrip } from "@/components/CategoryStrip";
 import { FeaturedProducts } from "@/components/FeaturedProducts";
 import { HeroSection } from "@/components/HeroSection";
-import { NewsletterCta } from "@/components/NewsletterCta";
 import { ProductCard } from "@/components/ProductCard";
 import { SectionHeading } from "@/components/SectionHeading";
 import { TrustPillRow } from "@/components/TrustPillRow";
@@ -21,27 +20,27 @@ export default async function HomePage() {
 
       <section className="space-y-5">
         <SectionHeading
-          eyebrow="Shop by Category"
-          title="Find exactly what you need in seconds."
-          description="From creator tech to workspace upgrades, browse everything in organized collections."
+          eyebrow="Menu Categories"
+          title="Find exactly what you're craving in seconds."
+          description="From hearty mains to quick snacks, browse everything in organized menus."
         />
         <CategoryStrip categories={categories} />
       </section>
 
       <section className="space-y-5">
         <SectionHeading
-          eyebrow="Featured Picks"
-          title="High-demand products chosen by our editorial team."
-          description="Updated daily with trending deals and customer-favorite picks."
+          eyebrow="Popular Choices"
+          title="High-demand meals chosen by our community."
+          description="Updated daily with trending dishes and customer-favorite bites."
         />
         <FeaturedProducts products={featured} />
       </section>
 
       <section className="space-y-5">
         <SectionHeading
-          eyebrow="Just Dropped"
-          title="Fresh arrivals across top stores."
-          description="Catch new launches before they go out of stock."
+          eyebrow="Just Cooked"
+          title="Fresh plates across top kitchens."
+          description="Catch new daily specials before they sell out."
         />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {justDropped.map((product) => (
@@ -50,26 +49,24 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="space-y-4 rounded-2xl border border-slate-700 bg-slate-900/75 p-6">
+      <section className="space-y-4 rounded-2xl border border-slate-200 bg-white/75 p-6">
         <SectionHeading
-          eyebrow="Top Stores"
-          title="Explore seller-first storefront pages."
-          description="Each store can have a dedicated catalog page backed by your API."
+          eyebrow="Top Kitchens"
+          title="Explore partner stalls and cloud kitchens."
+          description="Each culinary partner has a dedicated menu page backed by your API."
         />
         <div className="flex flex-wrap gap-3">
           {stores.map((store) => (
             <Link
               key={store}
               href={`/shop/${store}`}
-              className="rounded-full border border-slate-500 px-4 py-2 text-sm text-slate-100 transition hover:border-emerald-300 hover:text-emerald-300"
+              className="rounded-full border border-slate-300 px-4 py-2 text-sm text-slate-900 transition hover:border-orange-500 hover:text-orange-500"
             >
               {store}
             </Link>
           ))}
         </div>
       </section>
-
-      <NewsletterCta />
     </>
   );
 }

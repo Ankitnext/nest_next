@@ -7,10 +7,10 @@ const storeOrders = [
 export default function StoreOrdersPage() {
   return (
     <section className="space-y-4">
-      <h2 className="text-xl font-semibold text-slate-100">Store Orders</h2>
-      <div className="overflow-hidden rounded-2xl border border-slate-700 bg-slate-900/80">
+      <h2 className="text-xl font-semibold text-slate-900">Store Orders</h2>
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white/80">
         <table className="w-full text-left text-sm">
-          <thead className="bg-slate-800/80 text-slate-200">
+          <thead className="bg-slate-50/80 text-slate-800">
             <tr>
               <th className="px-4 py-3">Order</th>
               <th className="px-4 py-3">Customer</th>
@@ -20,8 +20,8 @@ export default function StoreOrdersPage() {
           </thead>
           <tbody>
             {storeOrders.map((order) => (
-              <tr key={order.id} className="border-t border-slate-700 text-slate-300">
-                <td className="px-4 py-3 font-medium text-slate-100">{order.id}</td>
+              <tr key={order.id} className="border-t border-slate-200 text-slate-600">
+                <td className="px-4 py-3 font-medium text-slate-900">{order.id}</td>
                 <td className="px-4 py-3">{order.customer}</td>
                 <td className="px-4 py-3">{order.amount}</td>
                 <td className="px-4 py-3">

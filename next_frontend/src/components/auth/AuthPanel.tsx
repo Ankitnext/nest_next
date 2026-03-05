@@ -10,6 +10,7 @@ type Role = "user" | "vendor" | "delivery";
 
 interface AuthPanelProps {
   redirectTo?: string;
+  allowedRoles?: Role[];
 }
 
 const ROLE_OPTIONS: { value: Role; label: string; icon: string; desc: string }[] = [
@@ -27,12 +28,14 @@ function roleRedirect(role: string): string {
   return "/shop";
 }
 
-export function AuthPanel({ redirectTo }: AuthPanelProps) {
+export function AuthPanel({ redirectTo, allowedRoles = ["user", "vendor", "delivery"] }: AuthPanelProps) {
   const router = useRouter();
   const { login } = useAuth();
 
+  const filteredRoles = ROLE_OPTIONS.filter(opt => allowedRoles.includes(opt.value));
+
   const [mode,        setMode]        = useState<Mode>("login");
-  const [role,        setRole]        = useState<Role>("user");
+  const [role,        setRole]        = useState<Role>(filteredRoles[0]?.value ?? "user");
   const [name,        setName]        = useState("");
   const [email,       setEmail]       = useState("");
   const [password,    setPassword]    = useState("");
@@ -76,21 +79,21 @@ export function AuthPanel({ redirectTo }: AuthPanelProps) {
   }
 
   return (
-    <section className="mx-auto w-full max-w-lg rounded-3xl border border-slate-700 bg-slate-900/85 p-6 md:p-8 space-y-5">
+    <section className="mx-auto w-full max-w-lg rounded-3xl border border-slate-200 bg-white/85 p-6 md:p-8 space-y-5">
       {/* Role picker (register mode only) */}
       {mode === "register" && (
         <div className="space-y-2">
-          <p className="text-xs uppercase tracking-widest text-slate-400">Register as</p>
-          <div className="grid grid-cols-3 gap-2">
-            {ROLE_OPTIONS.map((opt) => (
+          <p className="text-xs uppercase tracking-widest text-slate-500">Register as</p>
+          <div className={`grid gap-2 ${filteredRoles.length === 1 ? "grid-cols-1 max-w-[200px] mx-auto" : "grid-cols-" + Math.min(filteredRoles.length, 3)}`}>
+            {filteredRoles.map((opt) => (
               <button
                 key={opt.value}
                 type="button"
                 onClick={() => setRole(opt.value)}
                 className={`flex flex-col items-center gap-1 rounded-2xl border p-3 text-center text-xs transition ${
                   role === opt.value
-                    ? "border-emerald-400 bg-emerald-400/10 text-emerald-300"
-                    : "border-slate-600 text-slate-400 hover:border-slate-400"
+                    ? "border-orange-500 bg-orange-500/10 text-orange-500"
+                    : "border-slate-200 text-slate-500 hover:border-slate-400"
                 }`}
               >
                 <span className="text-xl">{opt.icon}</span>
@@ -103,14 +106,14 @@ export function AuthPanel({ redirectTo }: AuthPanelProps) {
       )}
 
       {/* Mode toggle */}
-      <div className="flex rounded-full border border-slate-600 p-1">
+      <div className="flex rounded-full border border-slate-200 p-1">
         {(["login", "register"] as Mode[]).map((m) => (
           <button
             key={m}
             type="button"
             onClick={() => setMode(m)}
             className={`flex-1 rounded-full px-4 py-2 text-sm font-semibold capitalize ${
-              mode === m ? "bg-emerald-400 text-slate-950" : "text-slate-200"
+              mode === m ? "bg-orange-500 text-white" : "text-slate-800"
             }`}
           >
             {m}
@@ -121,9 +124,9 @@ export function AuthPanel({ redirectTo }: AuthPanelProps) {
       <form onSubmit={onSubmit} className="space-y-4">
         {mode === "register" && (
           <label className="block space-y-1">
-            <span className="text-sm text-slate-200">Full Name</span>
+            <span className="text-sm text-slate-800">Full Name</span>
             <input required value={name} onChange={(e) => setName(e.target.value)}
-              className="w-full rounded-lg border border-slate-500 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none focus:border-emerald-300"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-orange-500"
               placeholder="John Doe" />
           </label>
         )}
@@ -131,9 +134,9 @@ export function AuthPanel({ redirectTo }: AuthPanelProps) {
         {/* Vendor: store name */}
         {mode === "register" && role === "vendor" && (
           <label className="block space-y-1">
-            <span className="text-sm text-slate-200">Store Name (slug)</span>
+            <span className="text-sm text-slate-800">Store Name (slug)</span>
             <input required value={storeName} onChange={(e) => setStoreName(e.target.value.toLowerCase().replace(/\s+/g, "-"))}
-              className="w-full rounded-lg border border-slate-500 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none focus:border-emerald-300"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-orange-500"
               placeholder="my-store" />
           </label>
         )}
@@ -142,20 +145,20 @@ export function AuthPanel({ redirectTo }: AuthPanelProps) {
         {mode === "register" && role === "delivery" && (
           <>
             <label className="block space-y-1">
-              <span className="text-sm text-slate-200">Phone Number</span>
+              <span className="text-sm text-slate-800">Phone Number</span>
               <input required value={phone} onChange={(e) => setPhone(e.target.value)}
-                className="w-full rounded-lg border border-slate-500 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none focus:border-emerald-300"
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-orange-500"
                 placeholder="+91 98765 43210" />
             </label>
             <div className="space-y-1">
-              <p className="text-sm text-slate-200">Vehicle Type</p>
+              <p className="text-sm text-slate-800">Vehicle Type</p>
               <div className="grid grid-cols-3 gap-2">
                 {VEHICLE_OPTIONS.map((v) => (
                   <button key={v} type="button" onClick={() => setVehicle(v)}
                     className={`rounded-xl border py-2 text-xs font-semibold transition ${
                       vehicle === v
-                        ? "border-emerald-400 bg-emerald-400/10 text-emerald-300"
-                        : "border-slate-600 text-slate-400 hover:border-slate-400"
+                        ? "border-orange-500 bg-orange-500/10 text-orange-500"
+                        : "border-slate-200 text-slate-500 hover:border-slate-400"
                     }`}>
                     {v === "Bike" ? "🏍️" : v === "Bicycle" ? "🚲" : v === "Scooter" ? "🛵" : v === "Car" ? "🚗" : v === "Van" ? "🚐" : "🚶"} {v}
                   </button>
@@ -166,16 +169,16 @@ export function AuthPanel({ redirectTo }: AuthPanelProps) {
         )}
 
         <label className="block space-y-1">
-          <span className="text-sm text-slate-200">Email</span>
+          <span className="text-sm text-slate-800">Email</span>
           <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-lg border border-slate-500 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none focus:border-emerald-300"
+            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-orange-500"
             placeholder="you@example.com" />
         </label>
 
         <label className="block space-y-1">
-          <span className="text-sm text-slate-200">Password</span>
+          <span className="text-sm text-slate-800">Password</span>
           <input type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-lg border border-slate-500 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none focus:border-emerald-300"
+            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-orange-500"
             placeholder="Minimum 6 characters" />
         </label>
 
@@ -184,7 +187,7 @@ export function AuthPanel({ redirectTo }: AuthPanelProps) {
         )}
 
         <button disabled={loading} type="submit"
-          className="w-full rounded-full bg-emerald-400 px-4 py-2 text-sm font-semibold uppercase tracking-wide text-slate-950 transition hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-70">
+          className="w-full rounded-full bg-orange-500 px-4 py-2 text-sm font-semibold uppercase tracking-wide text-white transition hover:bg-orange-500 disabled:cursor-not-allowed disabled:opacity-70">
           {loading ? "Please wait…" : mode === "login" ? "Login" : `Register as ${ROLE_OPTIONS.find(r => r.value === role)?.label ?? role}`}
         </button>
       </form>

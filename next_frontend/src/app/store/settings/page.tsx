@@ -61,24 +61,24 @@ export default function VendorSettings() {
   }
 
   if (loading) {
-    return <p className="text-slate-400">Loading settings...</p>;
+    return <p className="text-slate-500">Loading settings...</p>;
   }
 
   return (
     <div className="max-w-3xl space-y-8">
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-white mb-2">Store Settings</h1>
-        <p className="text-sm text-slate-400">Manage your store preferences and checkout rules.</p>
+        <p className="text-sm text-slate-500">Manage your store preferences and checkout rules.</p>
       </div>
 
       <div className={`rounded-2xl border p-6 md:p-8 flex items-center justify-between transition-colors ${
         settings.is_open 
-          ? "border-emerald-500/50 bg-emerald-500/10" 
+          ? "border-orange-600/50 bg-orange-600/10" 
           : "border-red-500/50 bg-red-500/10"
       }`}>
         <div>
           <h2 className="text-lg font-semibold text-white">Store Status: {settings.is_open ? 'Online' : 'Offline'}</h2>
-          <p className="text-sm mt-1 text-slate-300 max-w-lg">
+          <p className="text-sm mt-1 text-slate-600 max-w-lg">
             {settings.is_open 
               ? "Your store is open and your products are visible to customers." 
               : "Your store is currently closed. Customers cannot see or order your products."}
@@ -92,13 +92,13 @@ export default function VendorSettings() {
             onChange={(e) => handleSaveSettings({ is_open: e.target.checked })}
             disabled={saving}
           />
-          <div className="w-14 h-7 bg-red-500 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-emerald-500 shadow-inner"></div>
+          <div className="w-14 h-7 bg-red-500 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-orange-600 shadow-inner"></div>
         </label>
       </div>
 
-      <div className="rounded-2xl border border-slate-700/60 bg-slate-900/40 p-6 md:p-8 relative">
-        <h2 className="text-lg font-semibold text-slate-100 mb-4">Payment Policies</h2>
-        <p className="text-sm text-slate-400 mb-6 max-w-xl">
+      <div className="rounded-2xl border border-slate-200/60 bg-white/40 p-6 md:p-8 relative">
+        <h2 className="text-lg font-semibold text-slate-900 mb-4">Payment Policies</h2>
+        <p className="text-sm text-slate-500 mb-6 max-w-xl">
           Choose the payment policy for each fulfillment method individually.
         </p>
 
@@ -109,8 +109,8 @@ export default function VendorSettings() {
             { key: "policy_table", title: "On Table" },
             { key: "policy_queue", title: "In Queue" }
           ].map(opt => (
-            <div key={opt.key} className="space-y-3 p-4 rounded-xl border border-slate-700/50 bg-slate-800/30">
-              <h3 className="font-semibold text-slate-200">{opt.title} Payment</h3>
+            <div key={opt.key} className="space-y-3 p-4 rounded-xl border border-slate-200/50 bg-slate-50/30">
+              <h3 className="font-semibold text-slate-800">{opt.title} Payment</h3>
               <div className="flex gap-4">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -120,9 +120,9 @@ export default function VendorSettings() {
                     checked={settings[opt.key as keyof VSType] === "pay_after"}
                     onChange={() => handleSaveSettings({ [opt.key]: "pay_after" })}
                     disabled={saving}
-                    className="h-4 w-4 text-cyan-400 focus:ring-cyan-400 border-slate-600 bg-slate-900 cursor-pointer"
+                    className="h-4 w-4 text-cyan-400 focus:ring-cyan-400 border-slate-200 bg-white cursor-pointer"
                   />
-                  <span className={`text-sm ${settings[opt.key as keyof VSType] === "pay_after" ? "text-cyan-300 font-semibold" : "text-slate-300"}`}>Pay After</span>
+                  <span className={`text-sm ${settings[opt.key as keyof VSType] === "pay_after" ? "text-cyan-300 font-semibold" : "text-slate-600"}`}>Pay After</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -132,9 +132,9 @@ export default function VendorSettings() {
                     checked={settings[opt.key as keyof VSType] === "pay_before"}
                     onChange={() => handleSaveSettings({ [opt.key]: "pay_before" })}
                     disabled={saving}
-                    className="h-4 w-4 text-cyan-400 focus:ring-cyan-400 border-slate-600 bg-slate-900 cursor-pointer"
+                    className="h-4 w-4 text-cyan-400 focus:ring-cyan-400 border-slate-200 bg-white cursor-pointer"
                   />
-                  <span className={`text-sm ${settings[opt.key as keyof VSType] === "pay_before" ? "text-cyan-300 font-semibold" : "text-slate-300"}`}>Pay Before</span>
+                  <span className={`text-sm ${settings[opt.key as keyof VSType] === "pay_before" ? "text-cyan-300 font-semibold" : "text-slate-600"}`}>Pay Before</span>
                 </label>
               </div>
             </div>
@@ -142,9 +142,9 @@ export default function VendorSettings() {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-slate-700/60 bg-slate-900/40 p-6 md:p-8 relative">
-        <h2 className="text-lg font-semibold text-slate-100 mb-4">Supported Fulfillment Methods</h2>
-        <p className="text-sm text-slate-400 mb-6 max-w-xl">
+      <div className="rounded-2xl border border-slate-200/60 bg-white/40 p-6 md:p-8 relative">
+        <h2 className="text-lg font-semibold text-slate-900 mb-4">Supported Fulfillment Methods</h2>
+        <p className="text-sm text-slate-500 mb-6 max-w-xl">
           Restrict the delivery logic for your store. When disabled, users will not be able to choose these options during checkout. If a user's cart contains items from multiple stores, only the officially supported options overlapping across all stores will be available.
         </p>
 
@@ -159,8 +159,8 @@ export default function VendorSettings() {
               key={opt.key}
               className={`flex cursor-pointer items-start gap-4 rounded-xl border p-4 transition ${
                 settings[opt.key as keyof VSType]
-                  ? "border-emerald-500/50 bg-emerald-500/10"
-                  : "border-slate-700 bg-slate-800/50 hover:border-slate-500"
+                  ? "border-orange-600/50 bg-orange-600/10"
+                  : "border-slate-200 bg-slate-50/50 hover:border-slate-300"
               }`}
             >
               <div className="flex h-5 items-center mt-0.5">
@@ -169,29 +169,29 @@ export default function VendorSettings() {
                   checked={Boolean(settings[opt.key as keyof VSType])}
                   onChange={(e) => handleSaveSettings({ [opt.key]: e.target.checked })}
                   disabled={saving}
-                  className="form-checkbox h-4 w-4 text-emerald-400 focus:ring-emerald-400 border-slate-600 bg-slate-900 rounded cursor-pointer"
+                  className="form-checkbox h-4 w-4 text-orange-500 focus:ring-orange-500 border-slate-200 bg-white rounded cursor-pointer"
                 />
               </div>
               <div>
-                <p className={`font-semibold ${settings[opt.key as keyof VSType] ? "text-emerald-300" : "text-slate-200"}`}>
+                <p className={`font-semibold ${settings[opt.key as keyof VSType] ? "text-orange-500" : "text-slate-800"}`}>
                   {opt.title}
                 </p>
-                <p className="text-sm text-slate-400 mt-1">{opt.desc}</p>
+                <p className="text-sm text-slate-500 mt-1">{opt.desc}</p>
               </div>
             </label>
           ))}
         </div>
 
         {msg && (
-          <div className="mt-6 rounded-lg bg-emerald-500/10 px-4 py-2 border border-emerald-500/20 text-sm font-semibold text-emerald-300 animate-in fade-in zoom-in duration-300">
+          <div className="mt-6 rounded-lg bg-orange-600/10 px-4 py-2 border border-orange-600/20 text-sm font-semibold text-orange-500 animate-in fade-in zoom-in duration-300">
             {msg}
           </div>
         )}
       </div>
 
-      <div className="rounded-2xl border border-slate-700/60 bg-slate-900/40 p-6 md:p-8 relative">
-        <h2 className="text-lg font-semibold text-slate-100 mb-4">Physical Store Address</h2>
-        <p className="text-sm text-slate-400 mb-6 max-w-xl">
+      <div className="rounded-2xl border border-slate-200/60 bg-white/40 p-6 md:p-8 relative">
+        <h2 className="text-lg font-semibold text-slate-900 mb-4">Physical Store Address</h2>
+        <p className="text-sm text-slate-500 mb-6 max-w-xl">
           Enter the full physical address of your store. We use this to calculate delivery distances and fees dynamically when customers place orders. Please be as precise as possible (e.g., "123 Market St, City, State 12345").
         </p>
         <div className="space-y-4">
@@ -205,7 +205,7 @@ export default function VendorSettings() {
               handleSaveSettings({ store_address: e.target.value });
             }}
             disabled={saving}
-            className="w-full rounded-xl border border-slate-700 bg-slate-950/50 p-4 text-sm text-white placeholder-slate-500 focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500"
+            className="w-full rounded-xl border border-slate-200 bg-white/50 p-4 text-sm text-white placeholder-slate-500 focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500"
           />
         </div>
       </div>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Manrope, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
+import { Footer } from "@/components/Footer";
 
 const headingFont = Space_Grotesk({
   variable: "--font-heading",
@@ -14,9 +15,9 @@ const bodyFont = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "Baazaarse | Modern Commerce",
+  title: "Baazaarse | Campus Food Corner",
   description:
-    "A full-stack e-commerce starter powered by Next.js + NestJS with JSON APIs.",
+    "Order delicious meals and quick bites from your favorite campus kitchens.",
 };
 
 export default function RootLayout({
@@ -27,7 +28,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${headingFont.variable} ${bodyFont.variable} antialiased`}>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          {children}
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );

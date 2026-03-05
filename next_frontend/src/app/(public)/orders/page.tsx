@@ -34,15 +34,15 @@ function StatusStepper({ status }: { status: string }) {
                 className={`flex h-8 w-8 items-center justify-center rounded-full text-sm transition-all ${
                   done
                     ? active
-                      ? "bg-emerald-400 text-slate-950 ring-2 ring-emerald-300/50 scale-110"
+                      ? "bg-orange-500 text-white ring-2 ring-orange-500/50 scale-110"
                       : "bg-emerald-600 text-white"
-                    : "bg-slate-700 text-slate-400"
+                    : "bg-slate-700 text-slate-500"
                 }`}
               >
                 {stage.icon}
               </div>
               <p className={`mt-1 max-w-[64px] text-center text-[9px] leading-tight ${
-                active ? "text-emerald-300 font-semibold" : done ? "text-slate-300" : "text-slate-500"
+                active ? "text-orange-500 font-semibold" : done ? "text-slate-600" : "text-slate-500"
               }`}>
                 {stage.label}
               </p>
@@ -139,16 +139,16 @@ export default function OrdersPage() {
 
   return (
     <section className="space-y-6">
-      <h1 className="text-3xl font-semibold text-slate-100">Order History</h1>
+      <h1 className="text-3xl font-semibold text-slate-900">Order History</h1>
 
       {error   && <p className="rounded-xl bg-rose-500/10 px-4 py-3 text-sm text-rose-300 border border-rose-500/20">{error}</p>}
-      {success && <p className="rounded-xl bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300 border border-emerald-500/20">{success}</p>}
+      {success && <p className="rounded-xl bg-orange-600/10 px-4 py-3 text-sm text-orange-500 border border-orange-600/20">{success}</p>}
 
       {loading ? (
-        <p className="text-slate-400">Loading orders…</p>
+        <p className="text-slate-500">Loading orders…</p>
       ) : orders.length === 0 ? (
-        <div className="rounded-2xl border border-slate-700 bg-slate-900/80 p-10 text-center">
-          <p className="text-slate-300">No orders yet.</p>
+        <div className="rounded-2xl border border-slate-200 bg-white/80 p-10 text-center">
+          <p className="text-slate-600">No orders yet.</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -163,12 +163,12 @@ export default function OrdersPage() {
             return (
               <article
                 key={order.id}
-                className="rounded-2xl border border-slate-700 bg-slate-900/80 overflow-hidden"
+                className="rounded-2xl border border-slate-200 bg-white/80 overflow-hidden"
               >
                 {/* Order Number Banner */}
-                <div className="flex items-center justify-between px-5 py-2.5 bg-slate-800/60 border-b border-slate-700/60">
+                <div className="flex items-center justify-between px-5 py-2.5 bg-slate-50/60 border-b border-slate-200/60">
                   <div className="flex items-center gap-2">
-                    <span className="text-slate-400 text-xs">🧾 Order</span>
+                    <span className="text-slate-500 text-xs">🧾 Order</span>
                     <span className="font-mono text-sm font-bold tracking-wider text-amber-300">
                       {order.order_number || <span className="text-rose-400 italic">AWAITING PAYMENT</span>}
                     </span>
@@ -185,8 +185,8 @@ export default function OrdersPage() {
                       className="h-14 w-14 rounded-xl object-cover flex-shrink-0"
                     />
                     <div>
-                      <p className="font-semibold text-slate-100">{order.product_name}</p>
-                      <p className="text-xs text-slate-400">
+                      <p className="font-semibold text-slate-900">{order.product_name}</p>
+                      <p className="text-xs text-slate-500">
                         Qty: {order.quantity} · {asCurrency(Number(order.price) * order.quantity)}
                       </p>
                       <p className="text-xs text-slate-500">
@@ -198,7 +198,7 @@ export default function OrdersPage() {
                     {/* Status badge */}
                     <span className={`rounded-full px-3 py-1 text-xs font-semibold ${
                       isDelivered
-                        ? "bg-emerald-400/15 text-emerald-300"
+                        ? "bg-orange-500/15 text-orange-500"
                         : "bg-amber-400/15 text-amber-300"
                     }`}>
                       {STAGES.find((s) => s.key === order.status)?.icon} {stageLabel}
@@ -209,7 +209,7 @@ export default function OrdersPage() {
                       <button
                         onClick={() => handleReceived(order)}
                         disabled={isReceiving}
-                        className="flex items-center gap-1.5 rounded-full bg-emerald-400 px-4 py-1.5 text-xs font-bold text-slate-950 transition hover:bg-emerald-300 disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-emerald-400/20"
+                        className="flex items-center gap-1.5 rounded-full bg-orange-500 px-4 py-1.5 text-xs font-bold text-white transition hover:bg-orange-500 disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-orange-500/20"
                       >
                         {isReceiving ? (
                           <span className="animate-pulse">Confirming…</span>
@@ -224,7 +224,7 @@ export default function OrdersPage() {
                       <button
                         onClick={() => handlePayment(order.id)}
                         disabled={isPaying}
-                        className="flex items-center gap-2 rounded-full bg-cyan-500 px-5 py-2 text-sm font-bold text-slate-950 transition hover:bg-cyan-400 hover:scale-105 active:scale-95 disabled:opacity-60 disabled:pointer-events-none shadow-lg shadow-cyan-500/25"
+                        className="flex items-center gap-2 rounded-full bg-cyan-500 px-5 py-2 text-sm font-bold text-white transition hover:bg-cyan-400 hover:scale-105 active:scale-95 disabled:opacity-60 disabled:pointer-events-none shadow-lg shadow-cyan-500/25"
                       >
                         {isPaying ? (
                           <span className="animate-pulse">Processing...</span>
@@ -236,7 +236,7 @@ export default function OrdersPage() {
 
                     {/* Already delivered */}
                     {isDelivered && (
-                      <span className="text-xs text-emerald-500 font-semibold">🎉 Order complete</span>
+                      <span className="text-xs text-orange-600 font-semibold">🎉 Order complete</span>
                     )}
                   </div>
                 </div>
@@ -247,7 +247,7 @@ export default function OrdersPage() {
                     <span className="text-lg">🚚</span>
                     <div>
                       <p className="text-sm font-semibold text-amber-300">Your order is out for delivery!</p>
-                      <p className="text-xs text-slate-400">Click <strong>"Mark as Received"</strong> once you receive your package.</p>
+                      <p className="text-xs text-slate-500">Click <strong>"Mark as Received"</strong> once you receive your package.</p>
                     </div>
                   </div>
                 )}

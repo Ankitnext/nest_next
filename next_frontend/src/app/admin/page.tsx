@@ -41,12 +41,12 @@ interface DrillDown {
 }
 
 const STATUS_STYLES: Record<string, string> = {
-  pending:    "bg-slate-500/20 text-slate-300",
+  pending:    "bg-slate-500/20 text-slate-600",
   confirmed:  "bg-blue-500/20 text-blue-300",
   packing:    "bg-purple-500/20 text-purple-300",
   ready:      "bg-amber-500/20 text-amber-300",
   in_transit: "bg-orange-500/20 text-orange-300",
-  delivered:  "bg-emerald-500/20 text-emerald-300",
+  delivered:  "bg-orange-600/20 text-orange-500",
 };
 const STATUS_LABEL: Record<string, string> = {
   pending: "Placed", confirmed: "Received", packing: "Packing",
@@ -57,12 +57,12 @@ const STATUS_LABEL: Record<string, string> = {
 
 function StatCard({ label, value, sub, icon }: { label: string; value: string; sub: string; icon: string }) {
   return (
-    <div className="rounded-2xl border border-slate-700/60 bg-slate-900/60 p-5 space-y-2">
+    <div className="rounded-2xl border border-slate-200/60 bg-white/60 p-5 space-y-2">
       <div className="flex items-center justify-between">
-        <p className="text-xs uppercase tracking-widest text-slate-400">{label}</p>
+        <p className="text-xs uppercase tracking-widest text-slate-500">{label}</p>
         <span className="text-xl">{icon}</span>
       </div>
-      <p className="text-3xl font-bold text-slate-100">{value}</p>
+      <p className="text-3xl font-bold text-slate-900">{value}</p>
       <p className="text-xs text-slate-500">{sub}</p>
     </div>
   );
@@ -72,32 +72,32 @@ function StatCard({ label, value, sub, icon }: { label: string; value: string; s
 
 function DrillPanel({ data, type }: { data: DrillDown; type: "vendor" | "user" }) {
   return (
-    <div className="border-t border-slate-700/40 bg-slate-800/30 px-6 py-5 space-y-4">
+    <div className="border-t border-slate-200/40 bg-slate-50/30 px-6 py-5 space-y-4">
       <div className="flex gap-6 text-sm">
-        <span className="text-slate-400">Orders: <strong className="text-slate-100">{data.total_orders}</strong></span>
-        <span className="text-slate-400">
+        <span className="text-slate-500">Orders: <strong className="text-slate-900">{data.total_orders}</strong></span>
+        <span className="text-slate-500">
           {type === "vendor" ? "Net Profit" : "Total Spent"}:{" "}
-          <strong className="text-emerald-300">{asCurrency(data.total)}</strong>
+          <strong className="text-orange-500">{asCurrency(data.total)}</strong>
         </span>
       </div>
 
       {data.products.length === 0 ? (
-        <p className="text-sm text-slate-400 py-2">No order history yet.</p>
+        <p className="text-sm text-slate-500 py-2">No order history yet.</p>
       ) : (
         <div className="space-y-3">
           <p className="text-xs uppercase tracking-widest text-slate-500">
             {type === "vendor" ? "Products Sold" : "Products Ordered"}
           </p>
           {data.products.map(p => (
-            <div key={p.product_id} className="flex items-start gap-4 rounded-xl border border-slate-700/40 bg-slate-900/60 p-4">
+            <div key={p.product_id} className="flex items-start gap-4 rounded-xl border border-slate-200/40 bg-white/60 p-4">
               <img src={p.product_image} alt={p.product_name} className="h-11 w-11 rounded-xl object-cover flex-shrink-0" />
               <div className="flex-1 min-w-0">
-                <p className="font-semibold text-slate-100 text-sm">{p.product_name}</p>
-                <div className="mt-1.5 flex flex-wrap gap-3 text-xs text-slate-400">
+                <p className="font-semibold text-slate-900 text-sm">{p.product_name}</p>
+                <div className="mt-1.5 flex flex-wrap gap-3 text-xs text-slate-500">
                   <span>📦 {p.qty} unit{p.qty !== 1 ? "s" : ""}</span>
                   <span>
                     {type === "vendor" ? "💰 Revenue: " : "💳 Spent: "}
-                    <span className="text-emerald-300 font-semibold">
+                    <span className="text-orange-500 font-semibold">
                       {asCurrency(type === "vendor" ? (p.revenue ?? 0) : (p.spent ?? 0))}
                     </span>
                   </span>
@@ -106,14 +106,14 @@ function DrillPanel({ data, type }: { data: DrillDown; type: "vendor" | "user" }
                 <div className="mt-2 flex flex-wrap gap-1.5">
                   {p.orders.map(o => (
                     <span key={o.id}
-                      className={`rounded-full px-2 py-0.5 text-[10px] font-semibold border border-white/5 ${STATUS_STYLES[o.status] ?? "bg-slate-600/20 text-slate-300"}`}>
+                      className={`rounded-full px-2 py-0.5 text-[10px] font-semibold border border-white/5 ${STATUS_STYLES[o.status] ?? "bg-slate-600/20 text-slate-600"}`}>
                       #{o.id} {STATUS_LABEL[o.status] ?? o.status}
                     </span>
                   ))}
                 </div>
               </div>
               <div className="text-right flex-shrink-0">
-                <p className="text-base font-bold text-emerald-300">
+                <p className="text-base font-bold text-orange-500">
                   {asCurrency(type === "vendor" ? (p.revenue ?? 0) : (p.spent ?? 0))}
                 </p>
                 <p className="text-[10px] text-slate-500 mt-0.5">{type === "vendor" ? "revenue" : "spent"}</p>
@@ -233,11 +233,11 @@ function AdminContent() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-xs uppercase tracking-widest text-emerald-400">Admin Control Center</p>
-          <h1 className="text-2xl font-bold text-slate-100">Platform Overview</h1>
-          <p className="text-sm text-slate-400 mt-0.5">Welcome back, {userName ?? "Admin"}</p>
+          <p className="text-xs uppercase tracking-widest text-orange-500">Admin Control Center</p>
+          <h1 className="text-2xl font-bold text-slate-900">Platform Overview</h1>
+          <p className="text-sm text-slate-500 mt-0.5">Welcome back, {userName ?? "Admin"}</p>
         </div>
-        <span className="flex items-center gap-1.5 rounded-full bg-emerald-400/10 px-3 py-1.5 text-xs font-semibold text-emerald-300 border border-emerald-400/20">
+        <span className="flex items-center gap-1.5 rounded-full bg-orange-500/10 px-3 py-1.5 text-xs font-semibold text-orange-500 border border-orange-500/20">
           🟢 System Operational
         </span>
       </div>
@@ -264,7 +264,7 @@ function AdminContent() {
           ] as { key: Tab; label: string }[]).map(t => (
             <button key={t.key} onClick={() => { setTab(t.key); setExpanded(null); setDrillData(null); setSearch(""); }}
               className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
-                tab === t.key ? "bg-emerald-400 text-slate-950" : "border border-slate-600 text-slate-300 hover:border-emerald-400 hover:text-emerald-300"
+                tab === t.key ? "bg-orange-500 text-white" : "border border-slate-200 text-slate-600 hover:border-orange-500 hover:text-orange-500"
               }`}>
               {t.label}
             </button>
@@ -272,16 +272,16 @@ function AdminContent() {
         </div>
         <input value={search} onChange={e => setSearch(e.target.value.toLowerCase())}
           placeholder={tab === "markets" ? "Search markets…" : tab === "vendors" ? "Search vendors…" : "Search users…"}
-          className="rounded-xl border border-slate-600 bg-slate-900/60 px-3 py-1.5 text-sm text-slate-100 placeholder-slate-500 outline-none focus:border-emerald-400 sm:w-56" />
+          className="rounded-xl border border-slate-200 bg-white/60 px-3 py-1.5 text-sm text-slate-900 placeholder-slate-500 outline-none focus:border-orange-500 sm:w-56" />
       </div>
 
-      {loading && <p className="text-slate-400 text-sm animate-pulse">Loading data…</p>}
+      {loading && <p className="text-slate-500 text-sm animate-pulse">Loading data…</p>}
 
       {/* ── Vendors ──────────────────────────────────────────────────────── */}
       {!loading && tab === "vendors" && (
-        <div className="rounded-2xl border border-slate-700/60 bg-slate-900/60 overflow-hidden">
+        <div className="rounded-2xl border border-slate-200/60 bg-white/60 overflow-hidden">
           {/* Table header */}
-          <div className="hidden sm:grid grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr] gap-2 border-b border-slate-700/60 bg-slate-800/50 px-5 py-3 text-xs uppercase tracking-widest text-slate-400">
+          <div className="hidden sm:grid grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr] gap-2 border-b border-slate-200/60 bg-slate-50/50 px-5 py-3 text-xs uppercase tracking-widest text-slate-500">
             <span>Vendor</span><span className="text-center">Products</span><span className="text-center">Orders</span>
             <span className="text-right">Gross</span><span className="text-right">Margin (10%)</span><span className="text-right">Net Profit</span>
           </div>
@@ -289,29 +289,29 @@ function AdminContent() {
           {filteredVendors.length === 0 ? (
             <div className="px-5 py-10 text-center">
               <p className="text-3xl mb-2">🏪</p>
-              <p className="text-slate-300 font-medium">No vendors registered yet</p>
+              <p className="text-slate-600 font-medium">No vendors registered yet</p>
             </div>
           ) : filteredVendors.map(v => (
-            <div key={v.id} className="border-b border-slate-700/40 last:border-0">
+            <div key={v.id} className="border-b border-slate-200/40 last:border-0">
               {/* Row */}
               <button onClick={() => expand(v.id, "vendors")} className="w-full text-left">
-                <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr] items-center gap-2 px-5 py-4 hover:bg-slate-800/30 transition">
+                <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr] items-center gap-2 px-5 py-4 hover:bg-slate-50/30 transition">
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-emerald-400/10 text-sm font-bold text-emerald-300">
+                    <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-orange-500/10 text-sm font-bold text-orange-500">
                       {v.name[0]?.toUpperCase()}
                     </div>
                     <div className="min-w-0">
-                      <p className="font-semibold text-slate-100 truncate">{v.name}</p>
+                      <p className="font-semibold text-slate-900 truncate">{v.name}</p>
                       <p className="text-xs text-slate-500 truncate">{v.email}</p>
-                      {v.store && <p className="text-xs text-emerald-400 truncate">🏪 {v.store}</p>}
+                      {v.store && <p className="text-xs text-orange-500 truncate">🏪 {v.store}</p>}
                     </div>
                   </div>
-                  <p className="text-sm text-slate-300 text-center">{v.product_count}</p>
-                  <p className="text-sm text-slate-300 text-center">{v.order_count}</p>
-                  <p className="text-sm text-right text-slate-300">{asCurrency(v.gross_revenue)}</p>
+                  <p className="text-sm text-slate-600 text-center">{v.product_count}</p>
+                  <p className="text-sm text-slate-600 text-center">{v.order_count}</p>
+                  <p className="text-sm text-right text-slate-600">{asCurrency(v.gross_revenue)}</p>
                   <p className="text-sm text-right text-rose-400">−{asCurrency(v.platform_margin)}</p>
                   <div className="flex items-center justify-end gap-2">
-                    <p className={`text-sm font-bold ${v.vendor_profit > 0 ? "text-emerald-300" : "text-slate-400"}`}>
+                    <p className={`text-sm font-bold ${v.vendor_profit > 0 ? "text-orange-500" : "text-slate-500"}`}>
                       {asCurrency(v.vendor_profit)}
                     </p>
                     <span className="text-slate-500 text-sm">{expanded === v.id ? "▲" : "▼"}</span>
@@ -320,8 +320,8 @@ function AdminContent() {
               </button>
               {expanded === v.id && (
                 drillLoad ? (
-                  <div className="border-t border-slate-700/40 bg-slate-800/30 px-6 py-4">
-                    <p className="text-sm text-slate-400 animate-pulse">Loading orders…</p>
+                  <div className="border-t border-slate-200/40 bg-slate-50/30 px-6 py-4">
+                    <p className="text-sm text-slate-500 animate-pulse">Loading orders…</p>
                   </div>
                 ) : drillData ? (
                   <DrillPanel data={drillData} type="vendor" />
@@ -334,31 +334,31 @@ function AdminContent() {
 
       {/* ── Users ──────────────────────────────────────────────────────────── */}
       {!loading && tab === "users" && (
-        <div className="rounded-2xl border border-slate-700/60 bg-slate-900/60 overflow-hidden">
-          <div className="hidden sm:grid grid-cols-[2fr_1fr_1fr_auto] gap-2 border-b border-slate-700/60 bg-slate-800/50 px-5 py-3 text-xs uppercase tracking-widest text-slate-400">
+        <div className="rounded-2xl border border-slate-200/60 bg-white/60 overflow-hidden">
+          <div className="hidden sm:grid grid-cols-[2fr_1fr_1fr_auto] gap-2 border-b border-slate-200/60 bg-slate-50/50 px-5 py-3 text-xs uppercase tracking-widest text-slate-500">
             <span>User</span><span className="text-center">Orders</span><span className="text-right">Total Spent</span><span className="text-right">Joined</span>
           </div>
 
           {filteredUsers.length === 0 ? (
             <div className="px-5 py-10 text-center">
               <p className="text-3xl mb-2">👤</p>
-              <p className="text-slate-300 font-medium">No users registered yet</p>
+              <p className="text-slate-600 font-medium">No users registered yet</p>
             </div>
           ) : filteredUsers.map(u => (
-            <div key={u.id} className="border-b border-slate-700/40 last:border-0">
+            <div key={u.id} className="border-b border-slate-200/40 last:border-0">
               <button onClick={() => expand(u.id, "users")} className="w-full text-left">
-                <div className="grid grid-cols-[2fr_1fr_1fr_auto] items-center gap-2 px-5 py-4 hover:bg-slate-800/30 transition">
+                <div className="grid grid-cols-[2fr_1fr_1fr_auto] items-center gap-2 px-5 py-4 hover:bg-slate-50/30 transition">
                   <div className="flex items-center gap-3 min-w-0">
                     <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-blue-400/10 text-sm font-bold text-blue-300">
                       {u.name[0]?.toUpperCase()}
                     </div>
                     <div className="min-w-0">
-                      <p className="font-semibold text-slate-100 truncate">{u.name}</p>
+                      <p className="font-semibold text-slate-900 truncate">{u.name}</p>
                       <p className="text-xs text-slate-500 truncate">{u.email}</p>
                     </div>
                   </div>
-                  <p className="text-sm text-slate-300 text-center">{u.order_count}</p>
-                  <p className={`text-sm font-semibold text-right ${u.total_spent > 0 ? "text-emerald-300" : "text-slate-400"}`}>
+                  <p className="text-sm text-slate-600 text-center">{u.order_count}</p>
+                  <p className={`text-sm font-semibold text-right ${u.total_spent > 0 ? "text-orange-500" : "text-slate-500"}`}>
                     {asCurrency(u.total_spent)}
                   </p>
                   <div className="flex items-center gap-2">
@@ -369,8 +369,8 @@ function AdminContent() {
               </button>
               {expanded === u.id && (
                 drillLoad ? (
-                  <div className="border-t border-slate-700/40 bg-slate-800/30 px-6 py-4">
-                    <p className="text-sm text-slate-400 animate-pulse">Loading orders…</p>
+                  <div className="border-t border-slate-200/40 bg-slate-50/30 px-6 py-4">
+                    <p className="text-sm text-slate-500 animate-pulse">Loading orders…</p>
                   </div>
                 ) : drillData ? (
                   <DrillPanel data={drillData} type="user" />
@@ -387,26 +387,26 @@ function AdminContent() {
         return (
           <div className="space-y-4">
             {filteredMarkets.length === 0 ? (
-              <div className="rounded-2xl border border-slate-700/60 bg-slate-900/60 px-5 py-10 text-center">
+              <div className="rounded-2xl border border-slate-200/60 bg-white/60 px-5 py-10 text-center">
                 <p className="text-3xl mb-2">🏬</p>
-                <p className="text-slate-300 font-medium">No markets found</p>
+                <p className="text-slate-600 font-medium">No markets found</p>
               </div>
             ) : filteredMarkets.map(m => (
-              <div key={m.store} className="rounded-2xl border border-slate-700/60 bg-slate-900/60 overflow-hidden">
+              <div key={m.store} className="rounded-2xl border border-slate-200/60 bg-white/60 overflow-hidden">
                 {/* Store header row */}
                 <button onClick={() => setMExpanded(mExpanded === m.store ? null : m.store)}
-                  className="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-800/30 transition">
+                  className="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-50/30 transition">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-400/10 text-base font-bold text-emerald-300">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500/10 text-base font-bold text-orange-500">
                       {m.store[0]?.toUpperCase()}
                     </div>
                     <div className="text-left">
-                      <p className="font-semibold text-slate-100">{m.store}</p>
-                      <p className="text-xs text-slate-400">{m.products.length} products · Catalog GMV {asCurrency(m.gmv)}</p>
+                      <p className="font-semibold text-slate-900">{m.store}</p>
+                      <p className="text-xs text-slate-500">{m.products.length} products · Catalog GMV {asCurrency(m.gmv)}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="rounded-full bg-emerald-400/10 border border-emerald-400/20 px-2.5 py-0.5 text-xs font-semibold text-emerald-300">
+                    <span className="rounded-full bg-orange-500/10 border border-orange-500/20 px-2.5 py-0.5 text-xs font-semibold text-orange-500">
                       {m.products.length} products
                     </span>
                     <span className="text-slate-500">{mExpanded === m.store ? "▲" : "▼"}</span>
@@ -415,23 +415,23 @@ function AdminContent() {
 
                 {/* Product grid */}
                 {mExpanded === m.store && (
-                  <div className="border-t border-slate-700/40 bg-slate-800/20 p-5">
+                  <div className="border-t border-slate-200/40 bg-slate-50/20 p-5">
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                       {m.products.map(p => (
-                        <div key={p.id} className="rounded-xl border border-slate-700/40 bg-slate-900/60 overflow-hidden">
+                        <div key={p.id} className="rounded-xl border border-slate-200/40 bg-white/60 overflow-hidden">
                           <div className="relative">
                             <img src={p.image} alt={p.name}
                               className="h-32 w-full object-cover" />
                             {p.category && (
-                              <span className="absolute top-2 left-2 rounded-full bg-slate-900/80 px-2 py-0.5 text-[10px] font-semibold text-emerald-300">
+                              <span className="absolute top-2 left-2 rounded-full bg-white/80 px-2 py-0.5 text-[10px] font-semibold text-orange-500">
                                 {p.category}
                               </span>
                             )}
                           </div>
                           <div className="p-3">
-                            <p className="text-xs font-semibold text-slate-100 line-clamp-2 leading-snug">{p.name}</p>
+                            <p className="text-xs font-semibold text-slate-900 line-clamp-2 leading-snug">{p.name}</p>
                             <div className="mt-1.5 flex items-center gap-1.5">
-                              <span className="text-sm font-bold text-emerald-300">{asCurrency(p.price)}</span>
+                              <span className="text-sm font-bold text-orange-500">{asCurrency(p.price)}</span>
                               {p.oldPrice && p.oldPrice > p.price && (
                                 <span className="text-[10px] text-slate-500 line-through">{asCurrency(p.oldPrice)}</span>
                               )}
@@ -451,8 +451,8 @@ function AdminContent() {
       {!loading && tab === "market" && (
         <div className="rounded-2xl border border-violet-400/20 bg-violet-400/5 p-10 text-center space-y-5">
           <p className="text-5xl">🛍️</p>
-          <h2 className="text-2xl font-bold text-slate-100">Vendor Market Console</h2>
-          <p className="text-slate-400 max-w-md mx-auto text-sm leading-relaxed">
+          <h2 className="text-2xl font-bold text-slate-900">Vendor Market Console</h2>
+          <p className="text-slate-500 max-w-md mx-auto text-sm leading-relaxed">
             Add wholesale products for vendors to purchase, manage stock levels,
             and track all vendor orders — all in the dedicated Market console.
           </p>
@@ -466,8 +466,8 @@ function AdminContent() {
       {!loading && tab === "ar" && (
         <div className="rounded-2xl border border-sky-400/20 bg-sky-400/5 p-10 text-center space-y-5">
           <p className="text-5xl">🕶️</p>
-          <h2 className="text-2xl font-bold text-slate-100">AR/VR Model Management</h2>
-          <p className="text-slate-400 max-w-md mx-auto text-sm leading-relaxed">
+          <h2 className="text-2xl font-bold text-slate-900">AR/VR Model Management</h2>
+          <p className="text-slate-500 max-w-md mx-auto text-sm leading-relaxed">
             Upload and manage 3D AR/VR models. Generate QR codes and grant vendors
             global access to use these models in their own shops.
           </p>
@@ -484,7 +484,7 @@ function AdminContent() {
 
 export default function AdminPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-slate-950 flex items-center justify-center font-mono tracking-widest text-slate-500 text-xs animate-pulse">Loading Console...</div>}>
+    <Suspense fallback={<div className="min-h-screen bg-white flex items-center justify-center font-mono tracking-widest text-slate-500 text-xs animate-pulse">Loading Console...</div>}>
       <AdminContent />
     </Suspense>
   );

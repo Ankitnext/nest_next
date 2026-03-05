@@ -1,17 +1,17 @@
 @import "tailwindcss";
 
 :root {
-  --bg-0: #060b18;
-  --bg-1: #0d1428;
-  --bg-2: #16203d;
-  --surface: #f5f8ff;
-  --surface-soft: #e9efff;
-  --ink: #e7ecff;
-  --ink-dim: #a9b6d8;
-  --brand: #34d399;
-  --brand-dark: #0f766e;
-  --danger: #fb7185;
-  --line: #23304f;
+  --bg-0: #ffffff;
+  --bg-1: #f8fafc;
+  --bg-2: #f1f5f9;
+  --surface: #ffffff;
+  --surface-soft: #f8fafc;
+  --ink: #0f172a;
+  --ink-dim: #475569;
+  --brand: #f97316;
+  --brand-dark: #c2410c;
+  --danger: #ef4444;
+  --line: #e2e8f0;
 }
 
 * {
@@ -23,10 +23,7 @@ body {
   min-height: 100vh;
   color: var(--ink);
   font-family: var(--font-body), "Segoe UI", sans-serif;
-  background:
-    radial-gradient(circle at 10% -10%, #1f2c57 0%, transparent 40%),
-    radial-gradient(circle at 90% 0%, #124f53 0%, transparent 38%),
-    linear-gradient(145deg, var(--bg-0) 0%, var(--bg-1) 38%, var(--bg-2) 100%);
+  background-color: var(--bg-1);
 }
 
 h1,
@@ -42,8 +39,8 @@ a {
 }
 
 .card-glass {
-  border: 1px solid color-mix(in srgb, var(--surface-soft) 22%, transparent);
-  background: color-mix(in srgb, var(--bg-2) 78%, #050a17);
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(8px);
 }
 
@@ -63,7 +60,7 @@ a {
   inset: -1px;
   z-index: -1;
   border-radius: inherit;
-  background: linear-gradient(120deg, #2dd4bf 0%, #38bdf8 52%, #a78bfa 100%);
-  opacity: 0.28;
+  background: linear-gradient(120deg, #fdba74 0%, #fb923c 52%, #f97316 100%);
+  opacity: 0.15;
   filter: blur(12px);
 }

@@ -10,16 +10,16 @@ export function VendorStrip({ stores, activeVendor, activeCategory }: VendorStri
   const baseParams = activeCategory ? `category=${encodeURIComponent(activeCategory)}&` : "";
 
   return (
-    <section className="rounded-2xl border border-slate-700/80 bg-slate-900/70 p-4">
-      <p className="mb-3 text-xs uppercase tracking-widest text-emerald-400 font-semibold">Filter by Vendor</p>
+    <section className="rounded-2xl border border-slate-200/80 bg-white/70 p-4">
+      <p className="mb-3 text-xs uppercase tracking-widest text-orange-500 font-semibold">Filter by Vendor</p>
       <div className="flex flex-wrap gap-2">
         {/* All button */}
         <Link
           href={activeCategory ? `/shop?category=${encodeURIComponent(activeCategory)}` : "/shop"}
           className={`flex items-center gap-1.5 rounded-full border px-4 py-1.5 text-sm font-medium transition ${
             !activeVendor
-              ? "border-emerald-400 bg-emerald-400/10 text-emerald-300"
-              : "border-slate-600 text-slate-300 hover:border-emerald-400/60 hover:text-emerald-300"
+              ? "border-orange-500 bg-orange-500/10 text-orange-500"
+              : "border-slate-200 text-slate-600 hover:border-orange-500/60 hover:text-orange-500"
           }`}
         >
           🏪 All Vendors
@@ -33,11 +33,11 @@ export function VendorStrip({ stores, activeVendor, activeCategory }: VendorStri
               href={`/shop?${baseParams}vendor=${encodeURIComponent(store)}`}
               className={`flex items-center gap-1.5 rounded-full border px-4 py-1.5 text-sm font-medium transition ${
                 isActive
-                  ? "border-emerald-400 bg-emerald-400/10 text-emerald-300"
-                  : "border-slate-600 text-slate-300 hover:border-emerald-400/60 hover:text-emerald-300"
+                  ? "border-orange-500 bg-orange-500/10 text-orange-500"
+                  : "border-slate-200 text-slate-600 hover:border-orange-500/60 hover:text-orange-500"
               }`}
             >
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-400/15 text-[10px] font-bold text-emerald-300">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-orange-500/15 text-[10px] font-bold text-orange-500">
                 {store[0]?.toUpperCase()}
               </span>
               {store}

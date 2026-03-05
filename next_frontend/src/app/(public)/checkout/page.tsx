@@ -225,7 +225,7 @@ export default function CheckoutPage() {
             }
           },
           theme: {
-            color: "#10b981" // emerald-500
+            color: "#10b981" // orange-600
           }
         };
 
@@ -253,14 +253,14 @@ export default function CheckoutPage() {
   }
 
   if (loading || !allowedFulfillment) {
-    return <p className="text-slate-400">Loading checkout…</p>;
+    return <p className="text-slate-500">Loading checkout…</p>;
   }
 
   if (items.length === 0) {
     return (
-      <div className="rounded-2xl border border-slate-700 bg-slate-900/80 p-10 text-center space-y-3">
-        <p className="text-slate-300 text-lg">Your cart is empty.</p>
-        <Link href="/shop" className="inline-block rounded-full bg-emerald-400 px-5 py-2 text-sm font-semibold text-slate-950 hover:bg-emerald-300 transition">
+      <div className="rounded-2xl border border-slate-200 bg-white/80 p-10 text-center space-y-3">
+        <p className="text-slate-600 text-lg">Your cart is empty.</p>
+        <Link href="/shop" className="inline-block rounded-full bg-orange-500 px-5 py-2 text-sm font-semibold text-white hover:bg-orange-500 transition">
           Return to Shop
         </Link>
       </div>
@@ -269,7 +269,7 @@ export default function CheckoutPage() {
 
   return (
     <section className="space-y-6 max-w-5xl mx-auto">
-      <h1 className="text-3xl font-semibold text-slate-100 mb-6">Checkout</h1>
+      <h1 className="text-3xl font-semibold text-slate-900 mb-6">Checkout</h1>
 
       {feedback && (
         <p className="rounded-xl bg-orange-500/10 px-4 py-3 text-sm text-orange-300 border border-orange-500/20">
@@ -281,7 +281,7 @@ export default function CheckoutPage() {
         <div className="space-y-6">
           
           {/* FULFILLMENT SECTION */}
-          <div className="rounded-2xl border border-slate-700 bg-slate-900/80 p-6 space-y-5">
+          <div className="rounded-2xl border border-slate-200 bg-white/80 p-6 space-y-5">
             <h2 className="text-xl font-semibold text-white">How would you like your order?</h2>
             
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -290,8 +290,8 @@ export default function CheckoutPage() {
                   onClick={() => setFulfillmentType("delivery")}
                   className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${
                     fulfillmentType === "delivery" 
-                      ? "border-emerald-500 bg-emerald-500/10 text-emerald-300 shadow-md shadow-emerald-500/10" 
-                      : "border-slate-700 bg-slate-800 text-slate-400 hover:border-slate-500"
+                      ? "border-orange-600 bg-orange-600/10 text-orange-500 shadow-md shadow-orange-600/10" 
+                      : "border-slate-200 bg-slate-50 text-slate-500 hover:border-slate-300"
                   }`}
                 >
                   <MapPinIcon className="w-6 h-6" />
@@ -303,8 +303,8 @@ export default function CheckoutPage() {
                   onClick={() => setFulfillmentType("pickup")}
                   className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${
                     fulfillmentType === "pickup" 
-                      ? "border-emerald-500 bg-emerald-500/10 text-emerald-300 shadow-md shadow-emerald-500/10" 
-                      : "border-slate-700 bg-slate-800 text-slate-400 hover:border-slate-500"
+                      ? "border-orange-600 bg-orange-600/10 text-orange-500 shadow-md shadow-orange-600/10" 
+                      : "border-slate-200 bg-slate-50 text-slate-500 hover:border-slate-300"
                   }`}
                 >
                   <BuildingStorefrontIcon className="w-6 h-6" />
@@ -316,8 +316,8 @@ export default function CheckoutPage() {
                   onClick={() => setFulfillmentType("table")}
                   className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${
                     fulfillmentType === "table" 
-                      ? "border-emerald-500 bg-emerald-500/10 text-emerald-300 shadow-md shadow-emerald-500/10" 
-                      : "border-slate-700 bg-slate-800 text-slate-400 hover:border-slate-500"
+                      ? "border-orange-600 bg-orange-600/10 text-orange-500 shadow-md shadow-orange-600/10" 
+                      : "border-slate-200 bg-slate-50 text-slate-500 hover:border-slate-300"
                   }`}
                 >
                   <HashtagIcon className="w-6 h-6" />
@@ -329,8 +329,8 @@ export default function CheckoutPage() {
                   onClick={() => setFulfillmentType("queue")}
                   className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${
                     fulfillmentType === "queue" 
-                      ? "border-emerald-500 bg-emerald-500/10 text-emerald-300 shadow-md shadow-emerald-500/10" 
-                      : "border-slate-700 bg-slate-800 text-slate-400 hover:border-slate-500"
+                      ? "border-orange-600 bg-orange-600/10 text-orange-500 shadow-md shadow-orange-600/10" 
+                      : "border-slate-200 bg-slate-50 text-slate-500 hover:border-slate-300"
                   }`}
                 >
                   <QueueListIcon className="w-6 h-6" />
@@ -342,7 +342,7 @@ export default function CheckoutPage() {
             <div className="pt-2">
               {fulfillmentType === "delivery" && (
                 <div className="space-y-3">
-                  <label className="text-sm font-medium text-slate-300">Delivery Address</label>
+                  <label className="text-sm font-medium text-slate-600">Delivery Address</label>
                   <textarea
                     rows={2}
                     placeholder="123 Main St, Apt 4B, City, ZIP"
@@ -351,7 +351,7 @@ export default function CheckoutPage() {
                       setFulfillmentDetails(e.target.value);
                       setDeliveryDistanceKm(null);
                     }}
-                    className="w-full rounded-xl border border-slate-700 bg-slate-950/50 p-3 text-sm text-white placeholder-slate-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                    className="w-full rounded-xl border border-slate-200 bg-white/50 p-3 text-sm text-white placeholder-slate-500 focus:border-orange-600 focus:outline-none focus:ring-1 focus:ring-orange-600"
                   />
                   
                   <div className="flex items-center gap-4">
@@ -359,12 +359,12 @@ export default function CheckoutPage() {
                       type="button"
                       onClick={calculateDistance}
                       disabled={calculatingDistance || !fulfillmentDetails.trim()}
-                      className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl border border-slate-700 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50"
+                      className="px-4 py-2 bg-slate-50 hover:bg-slate-700 text-slate-600 rounded-xl border border-slate-200 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       {calculatingDistance ? "Calculating..." : "Calculate Fee"}
                     </button>
                     {deliveryDistanceKm !== null && (
-                      <p className="text-sm font-medium text-emerald-400">
+                      <p className="text-sm font-medium text-orange-500">
                         {deliveryDistanceKm.toFixed(1)} km • {asCurrency(deliveryDistanceKm * 10)}
                       </p>
                     )}
@@ -373,8 +373,8 @@ export default function CheckoutPage() {
               )}
 
               {fulfillmentType === "pickup" && (
-                <div className="rounded-xl bg-slate-800/50 p-4 border border-slate-700/50">
-                  <p className="text-sm text-slate-300">
+                <div className="rounded-xl bg-slate-50/50 p-4 border border-slate-200/50">
+                  <p className="text-sm text-slate-600">
                     Your order will be prepared for pickup at the store locations. You will receive an estimated completion time once the order is accepted.
                   </p>
                 </div>
@@ -382,20 +382,20 @@ export default function CheckoutPage() {
 
               {fulfillmentType === "table" && (
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-300">Table Number</label>
+                  <label className="text-sm font-medium text-slate-600">Table Number</label>
                   <input
                     type="text"
                     placeholder="e.g., Table 12, Window seat"
                     value={fulfillmentDetails}
                     onChange={(e) => setFulfillmentDetails(e.target.value)}
-                    className="w-full rounded-xl border border-slate-700 bg-slate-950/50 p-3 text-sm text-white placeholder-slate-500 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                    className="w-full rounded-xl border border-slate-200 bg-white/50 p-3 text-sm text-white placeholder-slate-500 focus:border-orange-600 focus:outline-none focus:ring-1 focus:ring-orange-600"
                   />
                 </div>
               )}
               
               {fulfillmentType === "queue" && (
-                <div className="rounded-xl bg-slate-800/50 p-4 border border-slate-700/50 flex flex-col gap-2">
-                  <p className="text-sm text-slate-300">
+                <div className="rounded-xl bg-slate-50/50 p-4 border border-slate-200/50 flex flex-col gap-2">
+                  <p className="text-sm text-slate-600">
                     You'll be placed into the physical service queue. Be near the store counters to receive your item when your name/order is called.
                   </p>
                   <p className="text-xs text-yellow-500 opacity-90 font-medium">
@@ -407,7 +407,7 @@ export default function CheckoutPage() {
           </div>
 
           {/* PAYMENT SECTION */}
-          <div className="rounded-2xl border border-slate-700 bg-slate-900/80 p-6 space-y-5">
+          <div className="rounded-2xl border border-slate-200 bg-white/80 p-6 space-y-5">
             <h2 className="text-xl font-semibold text-white">Payment Method</h2>
             
             <div className="grid grid-cols-2 gap-3">
@@ -416,7 +416,7 @@ export default function CheckoutPage() {
                 className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${
                   paymentMethod === "card" 
                     ? "border-cyan-500 bg-cyan-500/10 text-cyan-300 shadow-md shadow-cyan-500/10" 
-                    : "border-slate-700 bg-slate-800 text-slate-400 hover:border-slate-500"
+                    : "border-slate-200 bg-slate-50 text-slate-500 hover:border-slate-300"
                 }`}
               >
                 <CreditCardIcon className="w-6 h-6" />
@@ -426,8 +426,8 @@ export default function CheckoutPage() {
                 onClick={() => setPaymentMethod("cod")}
                 className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${
                   paymentMethod === "cod" 
-                    ? "border-emerald-500 bg-emerald-500/10 text-emerald-300 shadow-md shadow-emerald-500/10" 
-                    : "border-slate-700 bg-slate-800 text-slate-400 hover:border-slate-500"
+                    ? "border-orange-600 bg-orange-600/10 text-orange-500 shadow-md shadow-orange-600/10" 
+                    : "border-slate-200 bg-slate-50 text-slate-500 hover:border-slate-300"
                 }`}
               >
                 <BanknotesIcon className="w-6 h-6" />
@@ -439,7 +439,7 @@ export default function CheckoutPage() {
         </div>
 
         {/* ORDER SUMMARY */}
-        <aside className="h-fit rounded-2xl border border-slate-700 bg-slate-900/80 p-5 space-y-4 sticky top-24">
+        <aside className="h-fit rounded-2xl border border-slate-200 bg-white/80 p-5 space-y-4 sticky top-24">
           <h2 className="text-lg font-semibold text-white">Order Summary</h2>
           
           <div className="max-h-60 overflow-y-auto space-y-3 pr-2 custom-scrollbar">
@@ -447,14 +447,14 @@ export default function CheckoutPage() {
               <div key={item.id} className="flex justify-between items-center text-sm">
                 <div className="flex items-center gap-3 overflow-hidden">
                   <img src={item.product_image} alt="" className="w-10 h-10 rounded-md object-cover flex-shrink-0" />
-                  <span className="text-slate-300 truncate">{item.quantity}x {item.product_name}</span>
+                  <span className="text-slate-600 truncate">{item.quantity}x {item.product_name}</span>
                 </div>
-                <span className="text-slate-200 font-medium ml-2">{asCurrency(Number(item.price) * item.quantity)}</span>
+                <span className="text-slate-800 font-medium ml-2">{asCurrency(Number(item.price) * item.quantity)}</span>
               </div>
             ))}
           </div>
 
-          <div className="border-t border-slate-700 pt-3 space-y-2 text-sm text-slate-300">
+          <div className="border-t border-slate-200 pt-3 space-y-2 text-sm text-slate-600">
             <div className="flex justify-between"><span>Subtotal</span><span>{asCurrency(subtotal)}</span></div>
             <div className="flex justify-between">
               <span>Delivery Fee</span>
@@ -469,7 +469,7 @@ export default function CheckoutPage() {
             
             {!priorityLoading && (
               <label className={`mt-2 flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition ${
-                isPriority ? "border-amber-500 bg-amber-500/10 text-amber-200" : "border-slate-700 hover:border-slate-500 bg-slate-800/50"
+                isPriority ? "border-amber-500 bg-amber-500/10 text-amber-200" : "border-slate-200 hover:border-slate-300 bg-slate-50/50"
               } ${priorityCount >= 5 ? "opacity-50 cursor-not-allowed" : ""}`}>
                 <div className="pt-0.5">
                   <input
@@ -477,7 +477,7 @@ export default function CheckoutPage() {
                     checked={isPriority}
                     disabled={priorityCount >= 5}
                     onChange={(e) => setIsPriority(e.target.checked)}
-                    className="form-checkbox h-4 w-4 bg-slate-900 border-slate-600 rounded text-amber-500 focus:ring-amber-500 focus:ring-offset-slate-900"
+                    className="form-checkbox h-4 w-4 bg-white border-slate-200 rounded text-amber-500 focus:ring-amber-500 focus:ring-offset-slate-900"
                   />
                 </div>
                 <div className="flex-1">
@@ -494,7 +494,7 @@ export default function CheckoutPage() {
             )}
 
             <div className="flex justify-between pt-2"><span>Tax (8%)</span><span>{asCurrency(tax)}</span></div>
-            <div className="mt-3 flex justify-between border-t border-slate-700 pt-3 text-base font-bold text-emerald-400">
+            <div className="mt-3 flex justify-between border-t border-slate-200 pt-3 text-base font-bold text-orange-500">
               <span>Total</span><span>{asCurrency(total)}</span>
             </div>
           </div>
@@ -502,7 +502,7 @@ export default function CheckoutPage() {
           <button
             onClick={handlePlaceOrder}
             disabled={placingOrder}
-            className="w-full rounded-full bg-emerald-400 px-4 py-3.5 text-center text-sm font-bold text-slate-950 hover:bg-emerald-300 transition shadow-lg shadow-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed mt-4"
+            className="w-full rounded-full bg-orange-500 px-4 py-3.5 text-center text-sm font-bold text-white hover:bg-orange-500 transition shadow-lg shadow-orange-600/20 disabled:opacity-50 disabled:cursor-not-allowed mt-4"
           >
             {placingOrder ? "Processing..." : `Place Order • ${asCurrency(total)}`}
           </button>

@@ -14,13 +14,13 @@ export function AdminTopbar() {
   }
 
   return (
-    <div className="flex items-center justify-between rounded-2xl border border-slate-700 bg-slate-900/80 px-5 py-4">
+    <div className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white/80 px-5 py-4">
       <div>
-        <p className="text-xs uppercase tracking-[0.2em] text-emerald-300">Control Center</p>
-        <h1 className="mt-1 text-xl font-semibold text-slate-100">Marketplace Administration</h1>
+        <p className="text-xs uppercase tracking-[0.2em] text-orange-500">Control Center</p>
+        <h1 className="mt-1 text-xl font-semibold text-slate-900">Marketplace Administration</h1>
       </div>
       <div className="flex items-center gap-3">
-        <Link href="/" className="rounded-lg px-3 py-1.5 text-sm text-slate-400 transition hover:text-emerald-300">
+        <Link href="/" className="rounded-lg px-3 py-1.5 text-sm text-slate-500 transition hover:text-orange-500">
           🏠 Home
         </Link>
         <span className="text-xs text-slate-500">{userName ?? "Admin"}</span>
