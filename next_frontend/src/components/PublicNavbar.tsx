@@ -50,15 +50,15 @@ export function PublicNavbar() {
             : "hidden"
         } md:flex md:static md:flex-row md:items-center md:gap-1 md:border-none md:bg-transparent md:p-0 md:shadow-none text-sm w-full md:w-auto`}
       >
-        <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="rounded-lg px-3 py-2 md:py-1.5 text-white font-medium transition hover:bg-white/10 md:hover:bg-transparent hover:text-orange-400">Home</Link>
+        <Link href="/" onClick={() => setIsMobileMenuOpen(false)} style={{ color: "white" }} className="rounded-lg px-3 py-2 md:py-1.5 font-medium transition hover:bg-white/10 md:hover:bg-transparent hover:text-orange-400">Home</Link>
 
-        <Link href="/shop" onClick={() => setIsMobileMenuOpen(false)} className="rounded-lg px-3 py-2 md:py-1.5 text-white font-medium transition hover:bg-white/10 md:hover:bg-transparent hover:text-orange-400">Menu</Link>
-        <Link href="/pricing" onClick={() => setIsMobileMenuOpen(false)} className="rounded-lg px-3 py-2 md:py-1.5 text-white font-medium transition hover:bg-white/10 md:hover:bg-transparent hover:text-orange-400">Pricing</Link>
+        <Link href="/shop" onClick={() => setIsMobileMenuOpen(false)} style={{ color: "white" }} className="rounded-lg px-3 py-2 md:py-1.5 font-medium transition hover:bg-white/10 md:hover:bg-transparent hover:text-orange-400">Menu</Link>
+        <Link href="/pricing" onClick={() => setIsMobileMenuOpen(false)} style={{ color: "white" }} className="rounded-lg px-3 py-2 md:py-1.5 font-medium transition hover:bg-white/10 md:hover:bg-transparent hover:text-orange-400">Pricing</Link>
 
         {isLoggedIn && role === "user" && (
           <>
-            <Link href="/orders" onClick={() => setIsMobileMenuOpen(false)} className="rounded-lg px-3 py-2 md:py-1.5 text-white font-medium transition hover:bg-white/10 md:hover:bg-transparent hover:text-orange-400">Orders</Link>
-            <Link href="/create-store" onClick={() => setIsMobileMenuOpen(false)} className="rounded-lg px-3 py-2 md:py-1.5 text-white font-medium transition hover:bg-white/10 md:hover:bg-transparent hover:text-orange-400">Partner Kitchen</Link>
+            <Link href="/orders" onClick={() => setIsMobileMenuOpen(false)} style={{ color: "white" }} className="rounded-lg px-3 py-2 md:py-1.5 font-medium transition hover:bg-white/10 md:hover:bg-transparent hover:text-orange-400">Orders</Link>
+            <Link href="/create-store" onClick={() => setIsMobileMenuOpen(false)} style={{ color: "white" }} className="rounded-lg px-3 py-2 md:py-1.5 font-medium transition hover:bg-white/10 md:hover:bg-transparent hover:text-orange-400">Partner Kitchen</Link>
           </>
         )}
 
@@ -71,8 +71,8 @@ export function PublicNavbar() {
         {isLoggedIn ? (
           <>
             {role === "user" && (
-              <Link href="/cart" onClick={() => setIsMobileMenuOpen(false)}
-                className="w-max rounded-full border border-slate-500 px-4 py-1.5 text-white transition hover:border-orange-400 hover:text-orange-400 md:ml-1 mt-1 md:mt-0">
+              <Link href="/cart" onClick={() => setIsMobileMenuOpen(false)} style={{ color: "white" }}
+                className="w-max rounded-full border border-slate-500 px-4 py-1.5 transition hover:border-orange-400 hover:text-orange-400 md:ml-1 mt-1 md:mt-0">
                 Cart
               </Link>
             )}

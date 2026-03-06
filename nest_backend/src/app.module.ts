@@ -5,9 +5,10 @@ import { AuthService } from './auth.service';
 import { CartService } from './cart.service';
 import { DatabaseService } from './database.service';
 import { OrderService } from './order.service';
+import { R2Module } from './r2/r2.module';
 
 @Module({
-  imports: [],
+  imports: [R2Module],
   controllers: [AppController],
   providers: [AppService, DatabaseService, AuthService, CartService, OrderService],
 })

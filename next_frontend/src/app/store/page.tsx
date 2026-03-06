@@ -53,6 +53,36 @@ export default function StorePage() {
   const [pErr,       setPErr]       = useState("");
   const [uploading,  setUploading]  = useState(false);
   const [statusFilter, setStatusFilter] = useState("all");
+  const [uploadingImage, setUploadingImage] = useState(false);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    setPErr("");
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const res = await fetch(`${API}/upload/image`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${tok()}`,
+        },
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Upload failed");
+
+      setForm((prev) => ({ ...prev, image: data.url }));
+    } catch (err: any) {
+      setPErr(err.message || "Image upload failed");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -340,10 +370,12 @@ export default function StorePage() {
             </label>
 
             <label className="block space-y-1">
-              <span className="text-xs uppercase tracking-wider text-slate-500">Image URL</span>
-              <input value={form.image} onChange={e => setForm(p => ({...p, image: e.target.value}))}
-                placeholder="https://images.example.com/product.jpg"
-                className="w-full rounded-lg border border-slate-200/60 bg-white/60 px-3 py-2 text-sm text-slate-900 outline-none focus:border-orange-500 placeholder-slate-600"/>
+              <div className="flex justify-between items-end">
+                <span className="text-xs uppercase tracking-wider text-slate-500">Product Image</span>
+                {uploadingImage && <span className="text-xs font-semibold text-sky-500 animate-pulse">Uploading...</span>}
+              </div>
+              <input type="file" accept="image/*" onChange={handleImageUpload} disabled={uploadingImage}
+                className="w-full rounded-lg border border-slate-200/60 bg-white/60 px-3 py-2 text-sm text-slate-900 outline-none focus:border-orange-500 file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-orange-500/10 file:text-orange-600 hover:file:bg-orange-500/20"/>
               {form.image && (
                 <img src={form.image} alt="preview" className="mt-2 h-24 w-full rounded-lg object-cover border border-slate-200/60" onError={e => { (e.target as HTMLImageElement).style.display = "none"; }}/>
               )}

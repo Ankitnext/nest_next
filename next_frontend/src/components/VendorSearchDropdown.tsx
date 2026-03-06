@@ -63,7 +63,7 @@ export function VendorSearchDropdown({ vendors, activeVendor, onSelect }: Props)
   return (
     <div className="rounded-2xl border border-slate-200/80 bg-white/70 p-4">
       <p className="mb-3 text-xs uppercase tracking-widest text-orange-500 font-semibold">
-        Filter by Kitchen
+        Filter by Shop
       </p>
 
       <div ref={containerRef} className="relative">
@@ -75,7 +75,7 @@ export function VendorSearchDropdown({ vendors, activeVendor, onSelect }: Props)
               value={query}
               onFocus={() => setOpen(true)}
               onChange={e => { setQuery(e.target.value); setOpen(true); }}
-              placeholder="Search kitchen…"
+              placeholder="Search shop…"
               className="w-full rounded-xl border border-slate-200 bg-slate-50/60 py-2 pl-9 pr-4 text-sm text-slate-900 placeholder-slate-500 outline-none transition focus:border-orange-500 focus:bg-slate-50"
             />
             {/* Clear X */}
@@ -105,7 +105,7 @@ export function VendorSearchDropdown({ vendors, activeVendor, onSelect }: Props)
         {open && (
           <div className="absolute z-50 mt-2 w-full max-w-sm rounded-xl border border-slate-200 bg-white shadow-2xl overflow-hidden">
             {filtered.length === 0 ? (
-              <p className="px-4 py-3 text-sm text-slate-500">No registered kitchens match.</p>
+              <p className="px-4 py-3 text-sm text-slate-500">No registered shops match.</p>
             ) : (
               <ul className="max-h-56 overflow-y-auto divide-y divide-slate-200">
                 {filtered.map(v => (
@@ -138,7 +138,7 @@ export function VendorSearchDropdown({ vendors, activeVendor, onSelect }: Props)
 
       {/* Info */}
       {vendors.length === 0 && (
-        <p className="mt-2 text-xs text-slate-500">No kitchens have registered yet.</p>
+        <p className="mt-2 text-xs text-slate-500">No shops have registered yet.</p>
       )}
     </div>
   );
