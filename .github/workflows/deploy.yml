@@ -1,13 +1,9 @@
-name: Deploy Backend to VPS
+name: Deploy to VPS
 
 on:
   push:
     branches:
       - main
-    paths:
-      - "nest_backend/**"
-      - "ecosystem.config.js"
-      - ".github/workflows/deploy.yml"
 
 jobs:
   deploy:
@@ -37,13 +33,10 @@ jobs:
             pm2 restart ecosystem.config.js || pm2 start ecosystem.config.js
             cd ..
 
-            # 2. Update Frontend
+            # 2. Update Frontend - always rebuild to pick up code changes
             cd next_frontend
             npm install
             npm run build
-            # If there's no PM2 config for frontend, restart the existing process if it's named 'next-frontend'
-            # Or better, let's assume it's also in PM2. 
-            # (I will advise the user to ensure frontend is also in PM2)
             pm2 restart next-frontend || pm2 start "npm run start" --name "next-frontend"
 
             # Save PM2 state
