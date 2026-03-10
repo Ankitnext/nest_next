@@ -1,7 +1,8 @@
 import { fallbackCategories, fallbackProducts } from "@/lib/mock-data";
 import type { Product } from "@/types/product";
+import { getApiBaseUrl } from "./config";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001/api";
+const API_BASE = getApiBaseUrl();
 
 async function fetchWithFallback<T>(path: string, fallback: T): Promise<T> {
   try {

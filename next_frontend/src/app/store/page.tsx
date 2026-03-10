@@ -5,7 +5,9 @@ import { asCurrency } from "@/lib/format";
 import { useAuth } from "@/context/AuthContext";
 import { ProductForm as SharedProductForm } from "@/components/store/ProductForm";
 
-const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001/api";
+import { getApiBaseUrl } from "@/lib/config";
+
+const API = getApiBaseUrl();
 const tok = () => {
   const m = document.cookie.match(/(?:^|;\s*)novacart_token=([^;]+)/);
   return m ? m[1] : "";

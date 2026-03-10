@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { getApiBaseUrl } from "@/lib/config";
 
-const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001/api";
+const API = getApiBaseUrl();
 const tok = () => {
   if (typeof document === "undefined") return "";
   const m = document.cookie.match(/(?:^|;\s*)novacart_token=([^;]+)/);
