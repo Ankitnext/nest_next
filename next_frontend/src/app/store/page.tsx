@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { asCurrency } from "@/lib/format";
 import { useAuth } from "@/context/AuthContext";
+import { ProductForm as SharedProductForm } from "@/components/store/ProductForm";
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001/api";
 const tok = () => {
@@ -130,38 +131,6 @@ export default function StorePage() {
       setMyProducts(Array.isArray(d) ? d as VendorProduct[] : []);
     } catch {
       setMyProducts([]);
-    }
-  }
-
-  async function handleUpload(e: React.FormEvent) {
-    e.preventDefault();
-    setPMsg(""); setPErr("");
-    setUploading(true);
-    try {
-      const res = await fetch(`${API}/vendor/products`, {
-        method: "POST",
-        headers: authH(),
-        body: JSON.stringify({
-          name:        form.name,
-          description: form.desc,
-          price:       parseFloat(form.price),
-          oldPrice:    form.oldPrice ? parseFloat(form.oldPrice) : undefined,
-          category:    form.category || "General",
-          image:       form.image || undefined,
-          stockCount:  form.stock ? parseInt(form.stock) : 0,
-        }),
-      });
-      const data = await res.json() as { success?: boolean; trnum?: string; message?: string };
-      if (!res.ok) { setPErr(data.message ?? "Upload failed."); return; }
-      setPMsg(`✅ Product saved! Tracking number: ${data.trnum}`);
-      setForm(EMPTY_FORM);
-      // Refresh product list and switch to products tab
-      await loadMyProducts();
-      setTab("products");
-    } catch {
-      setPErr("Network error. Please try again.");
-    } finally {
-      setUploading(false);
     }
   }
 
@@ -337,67 +306,14 @@ export default function StorePage() {
 
       {/* Upload Product tab */}
       {tab === "upload" && (
-        <div className="max-w-xl rounded-2xl border border-slate-200/60 bg-white/60 overflow-hidden">
-          <div className="border-b border-slate-200/60 px-5 py-4">
-            <h2 className="font-semibold text-slate-900">Add New Product</h2>
-            <p className="text-xs text-slate-500 mt-0.5">Product will be listed under store: <span className="text-orange-500">{userStore ?? "your-store"}</span></p>
-          </div>
-          <form onSubmit={handleUpload} className="p-5 space-y-4">
-            {pMsg && <p className="rounded-xl bg-orange-600/10 px-4 py-3 text-sm text-orange-500 border border-orange-600/20">{pMsg}</p>}
-            {pErr && <p className="rounded-xl bg-rose-500/10 px-4 py-3 text-sm text-rose-300 border border-rose-500/20">{pErr}</p>}
-
-            <div className="grid grid-cols-2 gap-4">
-              {([
-                { label: "Product Name",     key: "name",     placeholder: "AeroPods Max", type: "input" },
-                { label: "Category",         key: "category", placeholder: "Audio",        type: "select" },
-                { label: "Price (USD)",      key: "price",    placeholder: "99.99",        type: "input" },
-                { label: "Old Price (USD)",  key: "oldPrice", placeholder: "129.99",       type: "input" },
-                { label: "Stock Count",      key: "stock",    placeholder: "50",           type: "input" },
-              ] as { label: string; key: keyof ProductForm; placeholder: string; type: "input" | "select" }[]).map(f => (
-                <label key={f.key} className="block space-y-1 col-span-1">
-                  <span className="text-xs uppercase tracking-wider text-slate-500">{f.label}</span>
-                  {f.type === "select" ? (
-                    <select
-                      value={form[f.key]}
-                      onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))}
-                      className="w-full rounded-lg border border-slate-200/60 bg-white/60 px-3 py-2 text-sm text-slate-900 outline-none focus:border-orange-500"
-                    >
-                      {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                    </select>
-                  ) : (
-                    <input required={f.key !== "oldPrice" && f.key !== "stock"} value={form[f.key]} onChange={e => setForm(p => ({...p, [f.key]: e.target.value}))}
-                      placeholder={f.placeholder}
-                      className="w-full rounded-lg border border-slate-200/60 bg-white/60 px-3 py-2 text-sm text-slate-900 outline-none focus:border-orange-500 placeholder-slate-600"/>
-                  )}
-                </label>
-              ))}
-            </div>
-
-            <label className="block space-y-1">
-              <span className="text-xs uppercase tracking-wider text-slate-500">Description</span>
-              <textarea required value={form.desc} onChange={e => setForm(p => ({...p, desc: e.target.value}))}
-                placeholder="Short product description…" rows={2}
-                className="w-full rounded-lg border border-slate-200/60 bg-white/60 px-3 py-2 text-sm text-slate-900 outline-none focus:border-orange-500 placeholder-slate-600 resize-none"/>
-            </label>
-
-            <label className="block space-y-1">
-              <div className="flex justify-between items-end">
-                <span className="text-xs uppercase tracking-wider text-slate-500">Product Image</span>
-                {uploadingImage && <span className="text-xs font-semibold text-sky-500 animate-pulse">Uploading...</span>}
-              </div>
-              <input type="file" accept="image/*" onChange={handleImageUpload} disabled={uploadingImage}
-                className="w-full rounded-lg border border-slate-200/60 bg-white/60 px-3 py-2 text-sm text-slate-900 outline-none focus:border-orange-500 file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-orange-500/10 file:text-orange-600 hover:file:bg-orange-500/20"/>
-              {form.image && (
-                <img src={form.image} alt="preview" className="mt-2 h-24 w-full rounded-lg object-cover border border-slate-200/60" onError={e => { (e.target as HTMLImageElement).style.display = "none"; }}/>
-              )}
-            </label>
-
-            <button type="submit" disabled={uploading}
-              className="w-full rounded-xl bg-orange-500 py-2.5 text-sm font-semibold text-white hover:bg-orange-500 transition disabled:opacity-60 disabled:cursor-not-allowed">
-              {uploading ? "Saving…" : "Save Product to Store"}
-            </button>
-          </form>
-        </div>
+        <SharedProductForm 
+          userStore={userStore} 
+          onSuccess={async (trnum) => {
+            await loadMyProducts();
+            // Optional: short delay to show success message before switching
+            setTimeout(() => setTab("products"), 2000);
+          }} 
+        />
       )}
 
       {/* My Products tab */}
