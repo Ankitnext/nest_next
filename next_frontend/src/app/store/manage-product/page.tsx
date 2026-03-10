@@ -3,13 +3,19 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001/api";
-const tok = () => {
+// Always uses correct API based on current browser location
+function getApi() {
+  if (typeof window !== "undefined" && (window.location.hostname.includes("baazaarse"))) {
+    return "https://baazaarse.online/api";
+  }
+  return process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
+}
+
+function getToken() {
   if (typeof document === "undefined") return "";
   const m = document.cookie.match(/(?:^|;\s*)novacart_token=([^;]+)/);
   return m ? m[1] : "";
-};
-const authH = () => ({ Authorization: `Bearer ${tok()}`, "Content-Type": "application/json" });
+}
 
 interface VendorProduct {
   id: number; trnum: string; name: string; description: string;
@@ -23,11 +29,23 @@ export default function StoreManageProductsPage() {
   const [error, setError]       = useState("");
 
   useEffect(() => {
+    const api = getApi();
+    const token = getToken();
     setLoading(true);
-    fetch(`${API}/vendor/products`, { headers: authH() })
+    fetch(`${api}/vendor/products`, {
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    })
       .then(r => r.json())
-      .then(d => setProducts(Array.isArray(d) ? d : []))
-      .catch(() => setError("Failed to load products."))
+      .then(d => {
+        if (Array.isArray(d)) {
+          setProducts(d);
+        } else if (d.message) {
+          setError(`Error: ${d.message}`);
+        } else {
+          setProducts([]);
+        }
+      })
+      .catch(() => setError("Failed to load products. Please check your connection."))
       .finally(() => setLoading(false));
   }, []);
 
@@ -76,12 +94,10 @@ export default function StoreManageProductsPage() {
             <div key={p.id}
               className="grid grid-cols-1 sm:grid-cols-[1fr_2fr_1fr_1fr_1fr_1fr] items-center gap-3 border-b border-slate-200/60 last:border-0 px-5 py-3 hover:bg-slate-50/50 transition">
 
-              {/* Tracking number */}
               <span className="rounded-lg bg-orange-500/10 border border-orange-500/20 px-2 py-0.5 text-[11px] font-mono font-semibold text-orange-500 truncate w-fit">
                 {p.trnum}
               </span>
 
-              {/* Product name + image */}
               <div className="flex items-center gap-2 min-w-0">
                 {p.image ? (
                   <img src={p.image} alt={p.name}
@@ -96,10 +112,8 @@ export default function StoreManageProductsPage() {
                 </div>
               </div>
 
-              {/* Category */}
               <span className="hidden sm:block text-xs text-slate-500 bg-slate-100 rounded-full px-2 py-0.5 w-fit">{p.category}</span>
 
-              {/* Price */}
               <div className="hidden sm:block text-right">
                 <p className="text-sm font-bold text-orange-500">${parseFloat(p.price).toFixed(2)}</p>
                 {p.old_price && (
@@ -107,7 +121,6 @@ export default function StoreManageProductsPage() {
                 )}
               </div>
 
-              {/* Stock */}
               <div className="hidden sm:flex justify-center">
                 <span className={`text-xs font-semibold rounded-full px-2 py-0.5 ${
                   p.in_stock
@@ -118,7 +131,6 @@ export default function StoreManageProductsPage() {
                 </span>
               </div>
 
-              {/* Date */}
               <span className="hidden sm:block text-xs text-slate-400">
                 {new Date(p.created_at).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
               </span>
