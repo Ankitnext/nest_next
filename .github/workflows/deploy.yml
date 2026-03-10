@@ -30,13 +30,21 @@ jobs:
             # Pull latest code
             git pull origin main
 
-            # Navigate to backend 
+            # 1. Update Backend
             cd nest_backend
-
-            # Install dependencies and build
             npm install
             npm run build
-
-            # Restart PM2
             pm2 restart ecosystem.config.js || pm2 start ecosystem.config.js
+            cd ..
+
+            # 2. Update Frontend
+            cd next_frontend
+            npm install
+            npm run build
+            # If there's no PM2 config for frontend, restart the existing process if it's named 'next-frontend'
+            # Or better, let's assume it's also in PM2. 
+            # (I will advise the user to ensure frontend is also in PM2)
+            pm2 restart next-frontend || pm2 start "npm run start" --name "next-frontend"
+
+            # Save PM2 state
             pm2 save
