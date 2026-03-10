@@ -126,7 +126,7 @@ export class AppController {
       `SELECT vp.*, u.is_open 
        FROM vendor_products vp 
        JOIN users u ON u.vendor_store = vp.vendor_store
-       WHERE vp.vendor_store = $1 AND u.is_open = true 
+       WHERE vp.vendor_store = $1
        ORDER BY vp.created_at DESC`,
       [username]
     );
@@ -163,7 +163,6 @@ export class AppController {
       `SELECT vp.*, u.is_open 
        FROM vendor_products vp
        JOIN users u ON u.vendor_store = vp.vendor_store
-       WHERE u.is_open = true
        ORDER BY vp.created_at DESC`,
     );
     const dbProducts = rows.map(r => ({
