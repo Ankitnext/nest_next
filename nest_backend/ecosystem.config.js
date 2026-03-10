@@ -1,4 +1,4 @@
-// CI/CD Deploy Test - v1.0.2 (SSH key fixed)
+// CI/CD Deploy Test - v1.0.3 (firewall port 22 opened)
 module.exports = {
   apps: [
     {
