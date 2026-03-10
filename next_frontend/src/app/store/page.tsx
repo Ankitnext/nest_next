@@ -109,10 +109,8 @@ export default function StorePage() {
   // Load my products when tab opens
   useEffect(() => {
     if (tab !== "products") return;
-    fetch(`${API}/vendor/products`, { headers: authH() })
-      .then(r => r.json())
-      .then(d => setMyProducts(Array.isArray(d) ? d as VendorProduct[] : []))
-      .catch(() => setMyProducts([]));
+    loadMyProducts();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab]);
 
   async function setStatus(orderId: number, status: string) {
@@ -122,6 +120,16 @@ export default function StorePage() {
     if (res.ok) {
       const updated = await res.json() as Order;
       setOrders(prev => prev.map(o => o.id === updated.id ? updated : o));
+    }
+  }
+
+  async function loadMyProducts() {
+    try {
+      const r = await fetch(`${API}/vendor/products`, { headers: authH() });
+      const d = await r.json();
+      setMyProducts(Array.isArray(d) ? d as VendorProduct[] : []);
+    } catch {
+      setMyProducts([]);
     }
   }
 
@@ -147,6 +155,9 @@ export default function StorePage() {
       if (!res.ok) { setPErr(data.message ?? "Upload failed."); return; }
       setPMsg(`✅ Product saved! Tracking number: ${data.trnum}`);
       setForm(EMPTY_FORM);
+      // Refresh product list and switch to products tab
+      await loadMyProducts();
+      setTab("products");
     } catch {
       setPErr("Network error. Please try again.");
     } finally {

@@ -549,14 +549,7 @@ export class AppController {
     return this.orderService.setStatus(orderId, body.status);
   }
 
-  /** Vendor lists their own products */
-  @Get('vendor/products')
-  getVendorProducts(@Headers('authorization') auth: string) {
-    const payload = decodeToken(auth);
-    requireRole(payload, 'vendor', 'admin');
-    if (!payload.store) return [];
-    return this.appService.getProductsByStore(payload.store);
-  }
+  // NOTE: GET /api/vendor/products is handled by listVendorProducts above (line ~231) which correctly queries the DB.
 
   // ── Delivery Boy ──────────────────────────────────────────────────────────
 
