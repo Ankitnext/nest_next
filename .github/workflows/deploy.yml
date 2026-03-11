@@ -1,13 +1,10 @@
-name: Deploy Backend to VPS
+name: Deploy to VPS
 
 on:
   push:
     branches:
       - main
-    paths:
-      - "nest_backend/**"
-      - "ecosystem.config.js"
-      - ".github/workflows/deploy.yml"
+      - staging
 
 jobs:
   deploy:
@@ -24,19 +21,62 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            # Navigate to the project directory
-            cd ${{ secrets.VPS_PROJECT_DIR }}
-
-            # Pull latest code
-            git pull origin main
-
-            # Navigate to backend
-            cd nest_backend
-
-            # Install dependencies and build
+            BRANCH="${{ github.ref_name }}"
+            if [ "$BRANCH" = "staging" ]; then
+              PROJECT_DIR="/root/nest_next_staging"
+              export PM2_APP_NAME="nest-backend-staging"
+              export FRONTEND_APP_NAME="next-frontend-staging"
+              export PORT=3003
+              export FRONTEND_PORT=3002
+            else
+              PROJECT_DIR="/root/nest_next"
+              export PM2_APP_NAME="nest-backend"
+              export FRONTEND_APP_NAME="next-frontend"
+              export PORT=3001
+              export FRONTEND_PORT=3000
+            fi
+            
+            echo "Deploying branch $BRANCH to $PROJECT_DIR"
+            
+            # Navigate to directory and pull
+            mkdir -p $PROJECT_DIR
+            cd $PROJECT_DIR
+            
+            if [ ! -d ".git" ]; then
+              git clone -b $BRANCH https://github.com/Ankitnext/nest_next.git .
+            else
+              git fetch origin
+              git checkout $BRANCH
+              git pull origin $BRANCH
+            fi
+            
+            # --- NEXT.JS FRONTEND ---
+            echo "Building Frontend..."
+            cd next_frontend
             npm install
             npm run build
-
-            # Restart PM2
-            pm2 restart ecosystem.config.js || pm2 start ecosystem.config.js
+            
+            # Start or Restart Frontend dynamically
+            pm2 describe $FRONTEND_APP_NAME > /dev/null
+            if [ $? -eq 0 ]; then
+              PORT=$FRONTEND_PORT pm2 restart $FRONTEND_APP_NAME --update-env
+            else
+              PORT=$FRONTEND_PORT pm2 start npm --name "$FRONTEND_APP_NAME" -- start
+            fi
+            
+            # --- NEST.JS BACKEND ---
+            echo "Building Backend..."
+            cd ../nest_backend
+            npm install
+            npm run build
+            
+            # Start or Restart Backend dynamically
+            pm2 describe $PM2_APP_NAME > /dev/null
+            if [ $? -eq 0 ]; then
+              pm2 restart ecosystem.config.js --update-env
+            else
+              pm2 start ecosystem.config.js --update-env
+            fi
+            
             pm2 save
+            echo "Deployment to $BRANCH completed successfully!"

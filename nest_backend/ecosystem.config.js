@@ -2,13 +2,13 @@
 module.exports = {
   apps: [
     {
-      name: 'nest-backend',
+      name: process.env.PM2_APP_NAME || 'nest-backend',
       script: 'dist/main.js',
-      instances: 'max', // or a specific number depending on the VPS cores
+      instances: 'max',
       exec_mode: 'cluster',
       env: {
         NODE_ENV: 'production',
-        PORT: 3001,
+        PORT: process.env.PORT || 3001,
       },
     }
   ]
