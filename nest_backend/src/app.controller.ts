@@ -61,12 +61,57 @@ export class AppController {
 
 
   @Get('categories')
-  async getCategories(): Promise<string[]> {
-    type Row = { category: string };
+  async getCategories() {
+    type Row = { id: number; name: string };
     const rows = await this.databaseService.query<Row>(
-      `SELECT DISTINCT category FROM vendor_products WHERE category IS NOT NULL ORDER BY category ASC`
+      `SELECT id, name FROM categories WHERE active = 1 ORDER BY name ASC`
     );
-    return rows.map(r => r.category);
+    return rows;
+  }
+
+  @Post('categories')
+  async createCategory(
+    @Headers('authorization') auth: string,
+    @Body() body: { name: string },
+  ) {
+    const p = decodeToken(auth);
+    requireRole(p, 'vendor', 'admin');
+
+    if (!body.name?.trim()) {
+      throw new BadRequestException('Category name is required');
+    }
+    const name = body.name.trim();
+
+    try {
+      type Row = { id: number; name: string };
+      const [inserted] = await this.databaseService.query<Row>(
+        `INSERT INTO categories (name) VALUES ($1) RETURNING id, name`,
+        [name]
+      );
+      return inserted;
+    } catch (e: any) {
+      if (e.code === '23505') { // Postgres unique violation error code
+        throw new BadRequestException('Category already exists');
+      }
+      throw new BadRequestException('Failed to create category');
+    }
+  }
+
+  @Delete('categories/:id')
+  async deleteCategory(
+    @Headers('authorization') auth: string,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    const p = decodeToken(auth);
+    requireRole(p, 'admin');
+
+    const [deleted] = await this.databaseService.query(
+      `DELETE FROM categories WHERE id = $1 RETURNING id`,
+      [id]
+    );
+
+    if (!deleted) throw new NotFoundException('Category not found');
+    return { success: true };
   }
 
   @Get('products/:id')

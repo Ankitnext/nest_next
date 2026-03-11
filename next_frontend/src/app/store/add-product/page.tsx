@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 // Always uses correct API based on current browser location
@@ -17,13 +17,13 @@ function getToken() {
   return m ? m[1] : "";
 }
 
-const CATEGORIES = ["Electronics", "Fashion", "Home", "Beauty", "Sports", "Grocery", "General", "Software", "Utensils"];
+type Category = { id: number; name: string };
 
 interface FormState {
   name: string; desc: string; price: string; oldPrice: string;
   category: string; stock: string; image: string;
 }
-const EMPTY: FormState = { name: "", desc: "", price: "", oldPrice: "", category: "General", stock: "", image: "" };
+const EMPTY: FormState = { name: "", desc: "", price: "", oldPrice: "", category: "", stock: "", image: "" };
 
 export default function StoreAddProductPage() {
   const router = useRouter();
@@ -32,8 +32,39 @@ export default function StoreAddProductPage() {
   const [err,  setErr]  = useState("");
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  
+  // Custom Category State
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loadingCats, setLoadingCats] = useState(true);
+  const [isAddingNewCategory, setIsAddingNewCategory] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [savingCategory, setSavingCategory] = useState(false);
 
-  const set = (k: keyof FormState) =>
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  async function fetchCategories(selectNewCategory: string = "") {
+    try {
+      setLoadingCats(true);
+      const res = await fetch(`${getApi()}/categories`);
+      if (res.ok) {
+        const data = await res.json();
+        setCategories(data);
+        if (selectNewCategory) {
+          setForm(p => ({ ...p, category: selectNewCategory }));
+        } else if (data.length > 0 && !form.category) {
+          setForm(p => ({ ...p, category: data[0].name }));
+        }
+      }
+    } catch (e) {
+      console.error("Failed to fetch categories");
+    } finally {
+      setLoadingCats(false);
+    }
+  }
+
+  const setField = (k: keyof FormState) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
       setForm(p => ({ ...p, [k]: e.target.value }));
 
@@ -56,6 +87,32 @@ export default function StoreAddProductPage() {
       setErr(ex.message || "Image upload failed");
     } finally {
       setUploading(false);
+    }
+  }
+
+  async function handleAddCategory() {
+    if (!newCategoryName.trim()) return;
+    setSavingCategory(true);
+    setErr("");
+    try {
+      const res = await fetch(`${getApi()}/categories`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name: newCategoryName.trim() })
+      });
+      const d = await res.json();
+      if (!res.ok) throw new Error(d.message || "Failed to add category");
+      
+      setNewCategoryName("");
+      setIsAddingNewCategory(false);
+      await fetchCategories(d.name); // Refresh list and auto-select the new one
+    } catch (ex: any) {
+      setErr(ex.message || "Failed to add category");
+    } finally {
+      setSavingCategory(false);
     }
   }
 
@@ -82,7 +139,7 @@ export default function StoreAddProductPage() {
       const d = await res.json() as { success?: boolean; trnum?: string; message?: string };
       if (!res.ok) { setErr(d.message ?? "Failed to add product."); return; }
       setMsg(`✅ Product added! Tracking: ${d.trnum}`);
-      setForm(EMPTY);
+      setForm(p => ({ ...EMPTY, category: categories.length > 0 ? categories[0].name : "General" }));
       setTimeout(() => router.push("/store/manage-product"), 1500);
     } catch {
       setErr("Network error. Please try again.");
@@ -105,40 +162,79 @@ export default function StoreAddProductPage() {
         <div className="grid grid-cols-2 gap-4">
           <label className="col-span-2 space-y-1">
             <span className="text-xs uppercase tracking-wider text-slate-500 font-medium">Product Name *</span>
-            <input required value={form.name} onChange={set("name")} placeholder="e.g. Wireless Headphones"
+            <input required value={form.name} onChange={setField("name")} placeholder="e.g. Wireless Headphones"
               className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400/30 placeholder-slate-400" />
           </label>
 
           <label className="space-y-1">
             <span className="text-xs uppercase tracking-wider text-slate-500 font-medium">Category *</span>
-            <select required value={form.category} onChange={set("category")}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-orange-400">
-              {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-            </select>
+            
+            {!isAddingNewCategory ? (
+              <select required value={form.category} disabled={loadingCats} onChange={(e) => {
+                  if (e.target.value === "__ADD_NEW__") {
+                    setIsAddingNewCategory(true);
+                  } else {
+                    setField("category")(e);
+                  }
+                }}
+                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-orange-400">
+                {loadingCats ? (
+                  <option value="">Loading categories...</option>
+                ) : (
+                  <>
+                    {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
+                    <option value="__ADD_NEW__" className="font-bold text-orange-600 border-t mt-1">➕ Add New Category...</option>
+                  </>
+                )}
+              </select>
+            ) : (
+              <div className="flex gap-2">
+                <input 
+                  autoFocus
+                  placeholder="New Category Name" 
+                  value={newCategoryName} 
+                  onChange={(e) => setNewCategoryName(e.target.value)}
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-orange-400 placeholder-slate-400" 
+                />
+                <button 
+                  type="button" 
+                  onClick={handleAddCategory}
+                  disabled={savingCategory || !newCategoryName.trim()}
+                  className="rounded-lg bg-orange-100 px-3 py-2 text-sm font-semibold text-orange-700 hover:bg-orange-200 transition disabled:opacity-50">
+                  {savingCategory ? ".." : "Save"}
+                </button>
+                <button 
+                  type="button" 
+                  onClick={() => setIsAddingNewCategory(false)}
+                  className="rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-500 hover:bg-slate-50 transition">
+                  Cancel
+                </button>
+              </div>
+            )}
           </label>
 
           <label className="space-y-1">
             <span className="text-xs uppercase tracking-wider text-slate-500 font-medium">Stock Count</span>
-            <input type="number" min="0" value={form.stock} onChange={set("stock")} placeholder="e.g. 50"
+            <input type="number" min="0" value={form.stock} onChange={setField("stock")} placeholder="e.g. 50"
               className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-orange-400 placeholder-slate-400" />
           </label>
 
           <label className="space-y-1">
             <span className="text-xs uppercase tracking-wider text-slate-500 font-medium">Price *</span>
-            <input required type="number" min="0" step="0.01" value={form.price} onChange={set("price")} placeholder="e.g. 99.99"
+            <input required type="number" min="0" step="0.01" value={form.price} onChange={setField("price")} placeholder="e.g. 99.99"
               className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-orange-400 placeholder-slate-400" />
           </label>
 
           <label className="space-y-1">
             <span className="text-xs uppercase tracking-wider text-slate-500 font-medium">Old Price (optional)</span>
-            <input type="number" min="0" step="0.01" value={form.oldPrice} onChange={set("oldPrice")} placeholder="e.g. 129.99"
+            <input type="number" min="0" step="0.01" value={form.oldPrice} onChange={setField("oldPrice")} placeholder="e.g. 129.99"
               className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-orange-400 placeholder-slate-400" />
           </label>
         </div>
 
         <label className="block space-y-1">
           <span className="text-xs uppercase tracking-wider text-slate-500 font-medium">Description *</span>
-          <textarea required rows={3} value={form.desc} onChange={set("desc")} placeholder="Short product description…"
+          <textarea required rows={3} value={form.desc} onChange={setField("desc")} placeholder="Short product description…"
             className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-orange-400 placeholder-slate-400 resize-none" />
         </label>
 

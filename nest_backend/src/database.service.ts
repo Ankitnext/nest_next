@@ -230,6 +230,19 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
         granted_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
         PRIMARY KEY (vendor_store, model_id)
       );
+      CREATE TABLE IF NOT EXISTS categories (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(80) NOT NULL UNIQUE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        dflag INTEGER NOT NULL DEFAULT 0,
+        active INTEGER NOT NULL DEFAULT 1,
+        flag INTEGER NOT NULL DEFAULT 0
+      );
+
+      INSERT INTO categories (name) VALUES 
+        ('Electronics'), ('Fashion'), ('Home'), ('Beauty'), ('Sports'), 
+        ('Grocery'), ('General'), ('Software'), ('Utensils')
+      ON CONFLICT (name) DO NOTHING;
     `);
 
     // Seed admin account only if it doesn't exist to prevent the hash from changing on every restart
