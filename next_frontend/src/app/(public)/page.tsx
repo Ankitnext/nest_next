@@ -24,7 +24,7 @@ export default async function HomePage() {
           title="Find exactly what you're craving in seconds."
           description="From hearty mains to quick snacks, browse everything in organized menus."
         />
-        <CategoryStrip categories={categories} />
+        <CategoryStrip categories={categories.map((c: any) => c.name)} />
       </section>
 
       <section className="space-y-5">

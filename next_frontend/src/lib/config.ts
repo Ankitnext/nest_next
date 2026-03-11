@@ -1,5 +1,3 @@
-"use client";
-
 /**
  * Utility to get the base API URL dynamically.
  * Priority: 
