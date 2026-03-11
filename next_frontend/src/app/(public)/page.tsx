@@ -13,6 +13,13 @@ export default async function HomePage() {
   const justDropped = products.slice(6, 10);
   const stores = Array.from(new Set(products.map((product) => product.store))).slice(0, 4);
 
+  // Bulletproof mapping for SSR - handle string or object arrays
+  const safeCategories = categories.map((cat: any) => {
+      if (typeof cat === 'string') return cat.toLowerCase();
+      if (cat && typeof cat === 'object' && cat.name) return String(cat.name).toLowerCase();
+      return 'other';
+  });
+
   return (
     <>
       <HeroSection spotlight={products[0] ?? null} />
@@ -24,7 +31,7 @@ export default async function HomePage() {
           title="Find exactly what you're craving in seconds."
           description="From hearty mains to quick snacks, browse everything in organized menus."
         />
-        <CategoryStrip categories={categories.map((c: any) => c.name)} />
+        <CategoryStrip categories={safeCategories} />
       </section>
 
       <section className="space-y-5">
