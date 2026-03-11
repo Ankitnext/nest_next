@@ -5,11 +5,8 @@ import Link from "next/link";
 
 // Always uses correct API based on current browser location
 function getApi() {
-  if (typeof window !== "undefined") {
-    const host = window.location.hostname;
-    if (host.includes("baazaarse") || host === "82.112.236.1") {
-      return "https://baazaarse.online/api";
-    }
+  if (typeof window !== "undefined" && (window.location.hostname.includes("baazaarse"))) {
+    return "https://baazaarse.online/api";
   }
   return process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api";
 }
