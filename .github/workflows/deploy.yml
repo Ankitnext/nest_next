@@ -81,6 +81,7 @@ jobs:
               printf 'RAZORPAY_KEY_SECRET=%s\n' "${{ secrets.RAZORPAY_KEY_SECRET }}" >> .env
             fi
             printf 'PORT=%s\n' "$PORT" >> .env
+            printf 'REDIS_URL=%s\n' "${{ secrets.REDIS_URL }}" >> .env
             
             npm install
             npm run build

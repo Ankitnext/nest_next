@@ -16,11 +16,19 @@ import {
 import * as jwt from 'jsonwebtoken';
 import { AppService } from './app.service';
 import { AuthService } from './auth.service';
+import { CacheService } from './cache.service';
 import { CartService } from './cart.service';
 import { OrderService } from './order.service';
 import { DatabaseService } from './database.service';
 import type { Product } from './app.service';
 import type { AddToCartDto } from './cart.service';
+
+// ── Cache TTLs (seconds) ─────────────────────────────────────────────────────
+const TTL_PRODUCTS      = 60;   // all products / store products
+const TTL_PRODUCT_SINGLE = 120; // individual product by id
+const TTL_CATEGORIES    = 300;  // categories rarely change
+const TTL_VENDORS       = 120;  // vendor list
+const TTL_PRIORITY_Q    = 10;   // priority queue count — very short
 
 interface JwtPayload {
   sub: number;
@@ -54,6 +62,7 @@ export class AppController {
   constructor(
     private readonly appService: AppService,
     private readonly authService: AuthService,
+    private readonly cacheService: CacheService,
     private readonly cartService: CartService,
     private readonly orderService: OrderService,
     private readonly databaseService: DatabaseService,
@@ -63,9 +72,14 @@ export class AppController {
   @Get('categories')
   async getCategories() {
     type Row = { id: number; name: string };
+    const cacheKey = 'categories:all';
+    const cached = await this.cacheService.get<Row[]>(cacheKey);
+    if (cached) return cached;
+
     const rows = await this.databaseService.query<Row>(
       `SELECT id, name FROM categories WHERE active = 1 ORDER BY name ASC`
     );
+    await this.cacheService.set(cacheKey, rows, TTL_CATEGORIES);
     return rows;
   }
 
@@ -88,6 +102,7 @@ export class AppController {
         `INSERT INTO categories (name) VALUES ($1) RETURNING id, name`,
         [name]
       );
+      await this.cacheService.del('categories:all'); // invalidate
       return inserted;
     } catch (e: any) {
       if (e.code === '23505') { // Postgres unique violation error code
@@ -111,27 +126,39 @@ export class AppController {
     );
 
     if (!deleted) throw new NotFoundException('Category not found');
+    await this.cacheService.del('categories:all'); // invalidate
     return { success: true };
   }
 
   @Get('products/:id')
   async getProductById(@Param('id', ParseIntPipe) id: number) {
-    // Client passes ID with 900000 offet.
+    // Client passes ID with 900000 offset.
     const dbId = id >= 900000 ? id - 900000 : id;
-    
+    const cacheKey = `product:${id}`;
+
     type DbRow = {
       id: number; trnum: string; vendor_id: number; vendor_store: string;
       name: string; description: string; price: string; old_price: string | null;
       currency: string; image: string; category: string;
       in_stock: boolean; stock_count: number;
     };
+
+    type ProductResult = {
+      id: number; trnum: string; name: string; description: string;
+      price: number; oldPrice: number; currency: string; image: string;
+      category: string; store: string; inStock: boolean; rating: number; stockCount: number;
+    };
+
+    const cached = await this.cacheService.get<ProductResult>(cacheKey);
+    if (cached) return cached;
+
     const rows = await this.databaseService.query<DbRow>(
       `SELECT * FROM vendor_products WHERE id = $1`,
       [dbId],
     );
     if (rows.length === 0) throw new NotFoundException(`Product ${id} not found`);
     const r = rows[0];
-    return {
+    const result: ProductResult = {
       id:          900000 + r.id,
       trnum:       r.trnum,
       name:        r.name,
@@ -146,20 +173,31 @@ export class AppController {
       rating:      4.0,
       stockCount:  r.stock_count,
     };
+    await this.cacheService.set(cacheKey, result, TTL_PRODUCT_SINGLE);
+    return result;
   }
 
   /** Public: all registered vendors (for shop vendor filter — no auth needed) */
   @Get('vendors')
   async getVendors() {
+    const cacheKey = 'vendors:all';
     type Row = { id: number; name: string; vendor_store: string };
+    type VendorResult = { id: number; name: string; store: string };
+
+    const cached = await this.cacheService.get<VendorResult[]>(cacheKey);
+    if (cached) return cached;
+
     const rows = await this.databaseService.query<Row>(
       `SELECT id, name, vendor_store FROM users WHERE role = 'vendor' AND vendor_store IS NOT NULL ORDER BY name ASC`,
     );
-    return rows.map(r => ({ id: r.id, name: r.name, store: r.vendor_store }));
+    const result = rows.map(r => ({ id: r.id, name: r.name, store: r.vendor_store }));
+    await this.cacheService.set(cacheKey, result, TTL_VENDORS);
+    return result;
   }
 
   @Get('stores/:username/products')
   async getProductsByStore(@Param('username') username: string) {
+    const cacheKey = `store:${username}:products`;
     type DbRow = {
       id: number; trnum: string; vendor_id: number; vendor_store: string;
       name: string; description: string; price: string; old_price: string | null;
@@ -167,6 +205,10 @@ export class AppController {
       in_stock: boolean; stock_count: number;
       is_open: boolean;
     };
+
+    const cached = await this.cacheService.get<object[]>(cacheKey);
+    if (cached) return cached;
+
     const rows = await this.databaseService.query<DbRow>(
       `SELECT vp.*, u.is_open 
        FROM vendor_products vp 
@@ -175,7 +217,7 @@ export class AppController {
        ORDER BY vp.created_at DESC`,
       [username]
     );
-    return rows.map(r => ({
+    const result = rows.map(r => ({
       id: 900000 + r.id,
       trnum: r.trnum,
       name: r.name,
@@ -190,13 +232,16 @@ export class AppController {
       rating: 4.0,
       stockCount: r.stock_count,
     }));
+    await this.cacheService.set(cacheKey, result, TTL_PRODUCTS);
+    return result;
   }
 
   // ── Vendor Products (DB) ───────────────────────────────────────────────────
 
-  /** GET /api/products — static mock + DB vendor products merged */
+  /** GET /api/products — DB vendor products */
   @Get('products')
   async getAllProducts() {
+    const cacheKey = 'products:all';
     type DbRow = {
       id: number; trnum: string; vendor_id: number; vendor_store: string;
       name: string; description: string; price: string; old_price: string | null;
@@ -204,6 +249,10 @@ export class AppController {
       in_stock: boolean; stock_count: number;
       is_open: boolean;
     };
+
+    const cached = await this.cacheService.get<object[]>(cacheKey);
+    if (cached) return cached;
+
     const rows = await this.databaseService.query<DbRow>(
       `SELECT vp.*, u.is_open 
        FROM vendor_products vp
@@ -225,6 +274,7 @@ export class AppController {
       rating: 4.0,
       stockCount: r.stock_count,
     }));
+    await this.cacheService.set(cacheKey, dbProducts, TTL_PRODUCTS);
     return dbProducts;
   }
 
@@ -269,6 +319,8 @@ export class AppController {
        body.oldPrice ?? null, body.image ?? '', body.category ?? 'General', body.stockCount ?? 0],
     );
 
+    // Invalidate product list and store-specific cache
+    await this.cacheService.del('products:all', `store:${p.store}:products`);
     return { success: true, trnum: inserted.trnum, id: inserted.id };
   }
 
@@ -355,8 +407,14 @@ export class AppController {
 
   @Get('orders/priority-queue-count')
   async getPriorityQueueCount() {
+    const cacheKey = 'priority:queue:count';
+    const cached = await this.cacheService.get<{ count: number }>(cacheKey);
+    if (cached) return cached;
+
     const count = await this.orderService.getPriorityQueueCount();
-    return { count };
+    const result = { count };
+    await this.cacheService.set(cacheKey, result, TTL_PRIORITY_Q);
+    return result;
   }
 
   @Post('orders/checkout/all')
@@ -558,6 +616,8 @@ export class AppController {
         p.sub
       ]
     );
+    // Vendor settings affect fulfillment display — bust vendors list cache
+    if (p.store) await this.cacheService.del('vendors:all', `store:${p.store}:products`);
     return { success: true };
   }
 
