@@ -67,6 +67,21 @@ jobs:
             # --- NEST.JS BACKEND ---
             echo "Building Backend..."
             cd ../nest_backend
+            
+            # Write env vars from GitHub Secrets based on branch
+            if [ "$BRANCH" = "staging" ]; then
+              printf 'DATABASE_URL=%s\n' "${{ secrets.STAGING_DATABASE_URL }}" > .env
+              printf 'JWT_SECRET=%s\n' "${{ secrets.STAGING_JWT_SECRET }}" >> .env
+              printf 'RAZORPAY_KEY_ID=%s\n' "${{ secrets.STAGING_RAZORPAY_KEY_ID }}" >> .env
+              printf 'RAZORPAY_KEY_SECRET=%s\n' "${{ secrets.STAGING_RAZORPAY_KEY_SECRET }}" >> .env
+            else
+              printf 'DATABASE_URL=%s\n' "${{ secrets.DATABASE_URL }}" > .env
+              printf 'JWT_SECRET=%s\n' "${{ secrets.JWT_SECRET }}" >> .env
+              printf 'RAZORPAY_KEY_ID=%s\n' "${{ secrets.RAZORPAY_KEY_ID }}" >> .env
+              printf 'RAZORPAY_KEY_SECRET=%s\n' "${{ secrets.RAZORPAY_KEY_SECRET }}" >> .env
+            fi
+            printf 'PORT=%s\n' "$PORT" >> .env
+            
             npm install
             npm run build
             

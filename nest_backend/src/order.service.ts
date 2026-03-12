@@ -3,9 +3,9 @@ import { DatabaseService } from './database.service';
 import * as crypto from 'crypto';
 const Razorpay = require('razorpay');
 
-const razorpayKeyId = process.env.RAZORPAY_KEY_ID || 'rzp_live_SMd8cPKdsEm5mi';
-const razorpayKeySecret = process.env.RAZORPAY_KEY_SECRET || 'fx6f9jdy1Rf6pXptgSYU7TZK';
-const isMockKey = razorpayKeyId.includes('placeholder');
+const razorpayKeyId = process.env.RAZORPAY_KEY_ID ?? '';
+const razorpayKeySecret = process.env.RAZORPAY_KEY_SECRET ?? '';
+const isMockKey = !razorpayKeyId || !razorpayKeySecret;
 
 const razorpay = new Razorpay({
   key_id: razorpayKeyId,
