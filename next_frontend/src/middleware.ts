@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const PUBLIC_PATHS    = ["/", "/login", "/shop", "/product"];
+const PUBLIC_PATHS    = ["/", "/login", "/shop", "/product", "/pricing"];
 const VENDOR_PATHS    = ["/store", "/market"];
 const ADMIN_PATHS     = ["/admin"];
 const DELIVERY_PATHS  = ["/delivery"];
-const PROTECTED_PATHS = ["/pricing", "/orders", "/cart", "/create-store", ...VENDOR_PATHS, ...ADMIN_PATHS, ...DELIVERY_PATHS];
+const PROTECTED_PATHS = ["/orders", "/cart", "/create-store", ...VENDOR_PATHS, ...ADMIN_PATHS, ...DELIVERY_PATHS];
 
 /** Decode JWT payload from base64 without a library */
 function decodeJwtPayload(token: string): Record<string, unknown> {

@@ -1,16 +1,20 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
 @import "tailwindcss";
 
 :root {
   --bg-0: #ffffff;
-  --bg-1: #f8fafc;
-  --bg-2: #f1f5f9;
+  --bg-1: #F3F4F9;
+  --bg-2: #e8eaf5;
   --surface: #ffffff;
-  --surface-soft: #f8fafc;
-  --ink: #0f172a;
-  --ink-dim: #475569;
-  --brand: #f97316;
-  --brand-dark: #c2410c;
+  --surface-soft: #f8f9ff;
+  --ink: #1a1a2e;
+  --ink-dim: #64748b;
+  --brand: #7158E2;
+  --brand-dark: #5a44cc;
+  --brand-light: #ede9ff;
+  --accent: #F1C40F;
   --danger: #ef4444;
+  --success: #22c55e;
   --line: #e2e8f0;
 }
 
@@ -22,7 +26,7 @@ body {
   margin: 0;
   min-height: 100vh;
   color: var(--ink);
-  font-family: var(--font-body), "Segoe UI", sans-serif;
+  font-family: 'Inter', "Segoe UI", sans-serif;
   background-color: var(--bg-1);
 }
 
@@ -30,7 +34,8 @@ h1,
 h2,
 h3,
 h4 {
-  font-family: var(--font-heading), "Trebuchet MS", sans-serif;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
 }
 
 a {
@@ -40,27 +45,25 @@ a {
 
 .card-glass {
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.90);
+  backdrop-filter: blur(12px);
 }
 
 .card-light {
-  border: 1px solid #d6e0ff;
-  background: linear-gradient(180deg, #ffffff 0%, #f2f6ff 100%);
-  color: #111b36;
+  border: 1px solid #e8eaf5;
+  background: #ffffff;
+  box-shadow: 0 2px 12px rgba(113, 88, 226, 0.07);
+  border-radius: 16px;
+  color: #1a1a2e;
 }
 
-.grid-halo {
-  position: relative;
+.brand-glow {
+  box-shadow: 0 4px 24px rgba(113, 88, 226, 0.25);
 }
 
-.grid-halo::before {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  z-index: -1;
-  border-radius: inherit;
-  background: linear-gradient(120deg, #fdba74 0%, #fb923c 52%, #f97316 100%);
-  opacity: 0.15;
-  filter: blur(12px);
+/* Smooth transitions globally */
+*, *::before, *::after {
+  transition-property: color, background-color, border-color, box-shadow, opacity, transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
 }

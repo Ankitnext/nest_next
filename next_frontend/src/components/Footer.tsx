@@ -2,111 +2,66 @@ import Link from "next/link";
 
 export function Footer() {
   return (
-    <footer className="mt-20 flex w-full flex-col">
-      {/* Top Section (Dark Blue) */}
-      <div className="bg-[#1e3a5f] px-6 py-12 md:px-12 md:py-16">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-10 md:flex-row md:items-start">
-          
-          {/* Left: App Promo */}
-          <div className="max-w-md text-center md:text-left">
-            <h2 className="text-3xl font-bold leading-tight text-white md:text-4xl">
-              Support Local,<br />Eat Better, Shop Smarter.
-            </h2>
-            <p className="mt-4 text-sm text-slate-300 md:text-base">
-              Get the Baazaarse app for the full experience. Real-time queue updates, exclusive neighborhood deals, and seamless one-tap payments.
+    <footer className="w-full bg-[#111827]">
+      {/* Main Footer */}
+      <div className="px-6 py-14 md:px-12">
+        <div className="mx-auto max-w-6xl grid grid-cols-2 gap-10 md:grid-cols-4">
+          {/* Brand */}
+          <div className="col-span-2 md:col-span-1">
+            <Link href="/" className="flex items-center gap-2.5">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#7158E2] text-sm font-bold text-white">
+                B
+              </span>
+              <span className="text-xl font-bold text-white">Baazaarse</span>
+            </Link>
+            <p className="mt-4 max-w-xs text-sm text-gray-400 leading-relaxed">
+              Your trusted hyperlocal marketplace, connecting you with local shops and services.
             </p>
-            <div className="mt-6 flex flex-wrap justify-center gap-3 md:justify-start">
-              <button className="flex items-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-100">
-                <span className="text-lg">🍏</span> App Store
-              </button>
-              <button className="flex items-center gap-2 rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-slate-900 transition hover:bg-slate-100">
-                <span className="text-lg">▶️</span> Play Store
-              </button>
+            <div className="mt-5 flex gap-3">
+              <a href="#" className="flex h-9 w-9 items-center justify-center rounded-xl border border-gray-700 text-gray-400 hover:border-[#7158E2] hover:text-[#7158E2] transition text-sm font-bold">𝕏</a>
+              <a href="#" className="flex h-9 w-9 items-center justify-center rounded-xl border border-gray-700 text-gray-400 hover:border-[#7158E2] hover:text-[#7158E2] transition">📷</a>
+              <a href="#" className="flex h-9 w-9 items-center justify-center rounded-xl border border-gray-700 text-gray-400 hover:border-[#7158E2] hover:text-[#7158E2] transition text-sm font-bold">f</a>
             </div>
           </div>
 
-          {/* Right: Newsletter Glass Card */}
-          <div className="w-full max-w-md rounded-2xl bg-white/10 p-6 backdrop-blur-md md:p-8 border border-white/10 shadow-xl">
-            <h3 className="text-xl font-bold text-white">Join our community</h3>
-            <p className="mt-2 text-sm text-slate-300">
-              Receive weekly highlights of new shops and exclusive local treats.
-            </p>
-            <form className="mt-5 flex w-full flex-col gap-3 sm:flex-row">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="w-full rounded-lg border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder:text-slate-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
-              />
-              <button
-                type="submit"
-                className="rounded-lg bg-orange-500 px-6 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-orange-600 w-full sm:w-auto"
-              >
-                Subscribe
-              </button>
-            </form>
-          </div>
-
-        </div>
-      </div>
-
-      {/* Bottom Section (White) */}
-      <div className="bg-white px-6 py-12 md:px-12">
-        <div className="mx-auto max-w-6xl grid grid-cols-2 gap-8 md:grid-cols-4 lg:grid-cols-5">
-          
-          {/* Brand & Copyright Info */}
-          <div className="col-span-2 lg:col-span-2">
-            <Link href="/" className="flex items-center gap-2">
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-500 text-sm font-bold text-white">
-                N
-              </span>
-              <span className="text-xl font-bold text-slate-900">BAAZAARSE</span>
-            </Link>
-            <p className="mt-4 max-w-xs text-sm text-slate-500">
-              Connecting neighbors with the best local business, one shop at a time. Proudly supporting over 500+ local vendors.
-            </p>
-          </div>
-
-          {/* Links Column 1 */}
+          {/* For Customers */}
           <div>
-            <h4 className="font-bold text-slate-900 mb-4">Discover</h4>
-            <ul className="flex flex-col gap-2 text-sm text-slate-500">
-              <li><Link href="/shop" className="hover:text-orange-500">Shops</Link></li>
-              <li><Link href="/shop" className="hover:text-orange-500">Cafes</Link></li>
-              <li><Link href="/shop" className="hover:text-orange-500">Restaurants</Link></li>
-              <li><Link href="/shop" className="hover:text-orange-500">Local Deals</Link></li>
+            <h4 className="font-bold text-white mb-5">For Customers</h4>
+            <ul className="flex flex-col gap-3 text-sm text-gray-400">
+              <li><Link href="/shop" className="hover:text-[#7158E2] transition">Browse Shops</Link></li>
+              <li><Link href="/shop" className="hover:text-[#7158E2] transition">Local Services</Link></li>
+              <li><Link href="/shop" className="hover:text-[#7158E2] transition">Deals & Offers</Link></li>
+              <li><Link href="/orders" className="hover:text-[#7158E2] transition">My Orders</Link></li>
             </ul>
           </div>
 
-          {/* Links Column 2 */}
+          {/* For Business */}
           <div>
-            <h4 className="font-bold text-slate-900 mb-4">Partner</h4>
-            <ul className="flex flex-col gap-2 text-sm text-slate-500">
-              <li><Link href="/create-store" className="hover:text-orange-500">For Vendors</Link></li>
-              <li><Link href="/create-store" className="hover:text-orange-500">For Couriers</Link></li>
-              <li><span className="hover:text-orange-500 cursor-pointer">Integration API</span></li>
+            <h4 className="font-bold text-white mb-5">For Business</h4>
+            <ul className="flex flex-col gap-3 text-sm text-gray-400">
+              <li><Link href="/create-store" className="hover:text-[#7158E2] transition">Register Your Shop</Link></li>
+              <li><Link href="/create-store" className="hover:text-[#7158E2] transition">Register Your Service</Link></li>
+              <li><Link href="/login" className="hover:text-[#7158E2] transition">Vendor Login</Link></li>
+              <li><span className="cursor-pointer hover:text-[#7158E2] transition">Business Resources</span></li>
             </ul>
           </div>
 
-          {/* Links Column 3 */}
+          {/* Contact */}
           <div>
-            <h4 className="font-bold text-slate-900 mb-4">Support</h4>
-            <ul className="flex flex-col gap-2 text-sm text-slate-500">
-              <li><span className="hover:text-orange-500 cursor-pointer">Help Center</span></li>
-              <li><span className="hover:text-orange-500 cursor-pointer">Terms of Service</span></li>
-              <li><span className="hover:text-orange-500 cursor-pointer">Privacy Policy</span></li>
+            <h4 className="font-bold text-white mb-5">Contact</h4>
+            <ul className="flex flex-col gap-3 text-sm text-gray-400">
+              <li><span className="text-gray-400">Email: support@baazaarse.com</span></li>
+              <li><span className="cursor-pointer hover:text-[#7158E2] transition">Help Center</span></li>
+              <li><span className="cursor-pointer hover:text-[#7158E2] transition">Terms of Service</span></li>
+              <li><span className="cursor-pointer hover:text-[#7158E2] transition">Privacy Policy</span></li>
             </ul>
           </div>
-
         </div>
 
-        {/* Deep Footer */}
-        <div className="mx-auto mt-12 flex max-w-6xl flex-col items-center justify-between border-t border-slate-200 pt-8 text-xs text-slate-500 md:flex-row">
-          <p>© {new Date().getFullYear()} Baazaarse Inc. All rights reserved.</p>
-          <div className="mt-4 flex gap-4 md:mt-0">
-            <span className="cursor-pointer hover:text-orange-500">Twitter</span>
-            <span className="cursor-pointer hover:text-orange-500">Instagram</span>
-            <span className="cursor-pointer hover:text-orange-500">Facebook</span>
-          </div>
+        {/* Bottom Bar */}
+        <div className="mx-auto mt-12 max-w-6xl flex flex-col items-center justify-between border-t border-gray-800 pt-8 text-xs text-gray-500 md:flex-row gap-3">
+          <p>© {new Date().getFullYear()} Baazaarse. All rights reserved.</p>
+          <p>Made with ❤️ for local communities in India</p>
         </div>
       </div>
     </footer>
