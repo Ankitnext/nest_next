@@ -9,11 +9,14 @@ import {
   type ReactNode,
 } from "react";
 
-type Role = "user" | "vendor" | "admin" | null;
+type Role = "user" | "vendor" | "admin" | "service_provider" | "delivery" | null;
 
 interface AuthContextValue {
   isLoggedIn: boolean;
   role: Role;
+  isVendor: boolean;
+  isDelivery: boolean;
+  isServiceProvider: boolean;
   userStore: string | null;
   userName: string | null;
   token: string | null;
@@ -36,6 +39,9 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [role, setRole] = useState<Role>(null);
+  const [isVendor, setIsVendor] = useState(false);
+  const [isDelivery, setIsDelivery] = useState(false);
+  const [isServiceProvider, setIsServiceProvider] = useState(false);
   const [userStore, setUserStore] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
   const [tokenStr, setTokenStr] = useState<string | null>(null);
@@ -44,6 +50,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const payload = parseJwt(token);
     setIsLoggedIn(true);
     setRole((payload.role as Role) ?? "user");
+    setIsVendor(Boolean(payload.isVendor));
+    setIsDelivery(Boolean(payload.isDelivery));
+    setIsServiceProvider(Boolean(payload.isServiceProvider));
     setUserStore((payload.store as string) ?? null);
     setUserName((payload.name as string) ?? null);
     setTokenStr(token);
@@ -70,6 +79,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem("novacart_token");
     setIsLoggedIn(false);
     setRole(null);
+    setIsVendor(false);
+    setIsDelivery(false);
+    setIsServiceProvider(false);
     setUserStore(null);
     setUserName(null);
     setTokenStr(null);
@@ -77,7 +89,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ isLoggedIn, role, userStore, userName, token: tokenStr, login, logout }}
+      value={{ isLoggedIn, role, isVendor, isDelivery, isServiceProvider, userStore, userName, token: tokenStr, login, logout }}
     >
       {children}
     </AuthContext.Provider>

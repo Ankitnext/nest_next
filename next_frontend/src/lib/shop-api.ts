@@ -160,6 +160,10 @@ export interface VendorSettings {
   allow_queue: boolean;
   is_open: boolean;
   store_address?: string;
+  gst_number?: string;
+  aadhar_number?: string;
+  shop_image?: string;
+  verification_status?: string;
 }
 
 export const getVendorSettings = () =>

@@ -41,12 +41,20 @@ interface VendorProduct {
   image: string; in_stock: boolean; stock_count: number; created_at: string;
 }
 
+interface MarketProduct {
+  id: number; name: string; description: string;
+  price: string; old_price: string | null;
+  image: string | null; category: string;
+  stock_count: number; created_at: string;
+}
+
 export default function StorePage() {
   const { userName, userStore } = useAuth();
   const [orders,     setOrders]     = useState<Order[]>([]);
   const [myProducts, setMyProducts] = useState<VendorProduct[]>([]);
+  const [marketProducts, setMarketProducts] = useState<MarketProduct[]>([]);
   const [arModels,   setArModels]   = useState<any[]>([]);
-  const [tab,        setTab]        = useState<"orders" | "upload" | "products" | "ar_models">("orders");
+  const [tab,        setTab]        = useState<"orders" | "upload" | "products" | "ar_models" | "market">("orders");
   const [loading,    setLoading]    = useState(true);
   const [error,      setError]      = useState("");
   const [showQR,     setShowQR]     = useState(false);
@@ -116,6 +124,12 @@ export default function StorePage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab]);
 
+  useEffect(() => {
+    if (tab !== "market") return;
+    loadMarketProducts();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab]);
+
   async function setStatus(orderId: number, status: string) {
     const res = await fetch(`${API}/vendor/orders/${orderId}/status`, {
       method: "PATCH", headers: authH(), body: JSON.stringify({ status }),
@@ -133,6 +147,16 @@ export default function StorePage() {
       setMyProducts(Array.isArray(d) ? d as VendorProduct[] : []);
     } catch {
       setMyProducts([]);
+    }
+  }
+
+  async function loadMarketProducts() {
+    try {
+      const r = await fetch(`${API}/market/products`, { headers: authH() });
+      const d = await r.json();
+      setMarketProducts(Array.isArray(d) ? d as MarketProduct[] : []);
+    } catch {
+      setMarketProducts([]);
     }
   }
 
@@ -157,10 +181,14 @@ export default function StorePage() {
             className="rounded-full border border-sky-400/30 bg-sky-400/10 px-3 py-1.5 text-xs font-semibold text-sky-300 hover:bg-sky-400/20 transition">
             📱 Store QR
           </button>
-          <a href="/market"
-            className="rounded-full border border-violet-400/30 bg-violet-400/10 px-3 py-1.5 text-xs font-semibold text-violet-300 hover:bg-violet-400/20 transition">
+          <button onClick={() => setTab("market")}
+            className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
+              tab === "market" 
+                ? "bg-violet-400 text-white border-violet-400" 
+                : "border-violet-400/30 bg-violet-400/10 text-violet-300 hover:bg-violet-400/20"
+            }`}>
             🏪 Market
-          </a>
+          </button>
           <span className="rounded-full border border-orange-500/20 bg-orange-500/10 px-3 py-1.5 text-xs font-semibold text-orange-500">
             🏪 {userStore ?? "My Store"}
           </span>
@@ -214,6 +242,7 @@ export default function StorePage() {
           { key: "orders",   label: "📦 Orders" },
           { key: "upload",   label: "➕ Add Product" },
           { key: "products", label: `🗂️ My Products${myProducts.length ? ` (${myProducts.length})` : ""}` },
+          { key: "market",   label: `🏪 Vendor Market${marketProducts.length ? ` (${marketProducts.length})` : ""}` },
           { key: "ar_models",label: `🕶️ AR Models${arModels.length ? ` (${arModels.length})` : ""}` },
         ] as const).map(t => (
           <button key={t.key} onClick={() => setTab(t.key)}
@@ -401,6 +430,110 @@ export default function StorePage() {
                   </div>
                 );
               })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Market tab */}
+      {tab === "market" && (
+        <div className="space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="rounded-2xl border border-violet-400/20 bg-violet-400/5 p-6 flex-1">
+              <h2 className="text-xl font-bold text-violet-400">🏪 B2B Vendor Market</h2>
+              <p className="text-sm text-slate-600">
+                Purchase inventory or equipment directly from Baazaarse Admin. 
+                These products are exclusively for vendors.
+              </p>
+            </div>
+          </div>
+
+          {/* 3D Billboard / Hero Section in Dashboard */}
+          {marketProducts.some(p => p.name.toLowerCase().includes("bill board") || p.name.toLowerCase().includes("billboard")) && (
+            <div className="relative overflow-hidden rounded-3xl bg-slate-900 border border-slate-800 shadow-xl group">
+              <div className="absolute inset-0 bg-gradient-to-r from-violet-600/20 to-transparent pointer-events-none" />
+              
+              {marketProducts.filter(p => p.name.toLowerCase().includes("bill board") || p.name.toLowerCase().includes("billboard")).map(p => (
+                <div key={p.id} className="relative flex flex-col md:flex-row items-center gap-6 p-6 md:p-10">
+                  <div className="flex-1 space-y-4">
+                    <div className="inline-flex items-center gap-2 rounded-full border border-violet-400/30 bg-violet-400/10 px-3 py-1 text-[10px] font-bold text-violet-300 uppercase tracking-widest">
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-violet-500" />
+                      </span>
+                      Admin Choice
+                    </div>
+                    <h2 className="text-2xl md:text-3xl font-black text-white tracking-tight">
+                      {p.name}
+                    </h2>
+                    <p className="text-sm text-slate-400 max-w-xl leading-relaxed line-clamp-2">
+                      {p.description}
+                    </p>
+                    <div className="flex items-center gap-4">
+                      <div className="flex flex-col">
+                        <span className="text-[10px] text-slate-500 font-bold uppercase">Wholesale Price</span>
+                        <span className="text-2xl font-black text-orange-500">{asCurrency(parseFloat(p.price))}</span>
+                      </div>
+                      <a href="/market" className="rounded-full bg-white px-6 py-2.5 text-xs font-black text-slate-900 hover:bg-violet-400 hover:text-white transition-all transform hover:scale-105 shadow-lg">
+                        ADVERTISE NOW
+                      </a>
+                    </div>
+                  </div>
+                  
+                  <div className="relative w-24 md:w-40 aspect-square">
+                    <div className="absolute inset-0 bg-violet-500/20 blur-[40px] rounded-full" />
+                    {p.image ? (
+                      <img 
+                        src={p.image} 
+                        alt={p.name} 
+                        className="relative z-10 w-full h-full object-contain rounded-2xl transform rotate-3 group-hover:rotate-0 transition-transform duration-500" 
+                      />
+                    ) : (
+                      <div className="relative z-10 w-full h-full bg-slate-800 rounded-2xl flex items-center justify-center text-4xl shadow-inner border border-slate-700">
+                        🏢
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {marketProducts.length === 0 ? (
+            <div className="rounded-2xl border border-slate-200/60 bg-white/60 p-10 text-center">
+              <p className="text-xl">🏪</p>
+              <p className="mt-2 text-slate-500">No market products available yet.</p>
+              <p className="text-sm text-slate-500 mt-1">Admin listed wholesale products will appear here.</p>
+            </div>
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {marketProducts.map(p => (
+                <div key={p.id} className="rounded-2xl border border-slate-200/60 bg-white/60 overflow-hidden flex flex-col group">
+                  <div className="relative h-48 bg-slate-100">
+                    {p.image ? (
+                      <img src={p.image} alt={p.name} className="h-full w-full object-cover transition duration-500 group-hover:scale-110" />
+                    ) : (
+                      <div className="flex h-full items-center justify-center text-4xl">🏢</div>
+                    )}
+                    <div className="absolute top-3 right-3 rounded-full bg-white/90 px-2 py-1 text-[10px] font-bold text-slate-900 shadow-sm">
+                      {p.category}
+                    </div>
+                  </div>
+                  <div className="p-5 flex flex-col flex-1 gap-2">
+                    <h3 className="font-bold text-slate-900">{p.name}</h3>
+                    <p className="text-xs text-slate-500 line-clamp-2">{p.description}</p>
+                    <div className="mt-auto pt-4 flex items-center justify-between border-t border-slate-100">
+                      <div>
+                        <p className="text-[10px] uppercase text-slate-400 font-bold">Wholesale Price</p>
+                        <p className="text-lg font-black text-orange-500">{asCurrency(parseFloat(p.price))}</p>
+                      </div>
+                      <a href="/market" className="rounded-full bg-violet-500 px-4 py-2 text-xs font-bold text-white hover:bg-violet-400 transition transform hover:scale-105">
+                        VIEW MARKET
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </div>

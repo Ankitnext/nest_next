@@ -35,6 +35,10 @@ export function middleware(request: NextRequest) {
   const payload = decodeJwtPayload(token);
   const role = (payload.role as string) ?? "user";
 
+  const isVendor = Boolean(payload.isVendor);
+  const isDelivery = Boolean(payload.isDelivery);
+  const isServiceProvider = Boolean(payload.isServiceProvider);
+
   // Admin-only paths
   if (ADMIN_PATHS.some((p) => pathname.startsWith(p)) && role !== "admin") {
     const loginUrl = request.nextUrl.clone();
@@ -45,7 +49,7 @@ export function middleware(request: NextRequest) {
   }
 
   // Vendor-only paths (admin also allowed)
-  if (VENDOR_PATHS.some((p) => pathname.startsWith(p)) && role !== "vendor" && role !== "admin") {
+  if (VENDOR_PATHS.some((p) => pathname.startsWith(p)) && !isVendor && role !== "admin") {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/login";
     loginUrl.searchParams.set("redirect", pathname);
@@ -54,7 +58,7 @@ export function middleware(request: NextRequest) {
   }
 
   // Delivery-only paths (admin also allowed)
-  if (DELIVERY_PATHS.some((p) => pathname.startsWith(p)) && role !== "delivery" && role !== "admin") {
+  if (DELIVERY_PATHS.some((p) => pathname.startsWith(p)) && !isDelivery && role !== "admin") {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/login";
     loginUrl.searchParams.set("redirect", pathname);

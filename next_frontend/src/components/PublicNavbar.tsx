@@ -7,7 +7,7 @@ import { useState } from "react";
 import { Bars3Icon, XMarkIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
 
 export function PublicNavbar() {
-  const { isLoggedIn, role, userName, logout } = useAuth();
+  const { isLoggedIn, role, isVendor, isDelivery, isServiceProvider, userName, logout } = useAuth();
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -16,7 +16,17 @@ export function PublicNavbar() {
     router.push("/");
   }
 
-  const dashboardHref = role === "admin" ? "/admin" : role === "vendor" ? "/store" : null;
+  const isVendorOrLegacy = isVendor || role === "vendor";
+  const isDeliveryOrLegacy = isDelivery || role === "delivery";
+  const dashboardHref = role === "admin" 
+    ? "/admin" 
+    : isVendorOrLegacy 
+      ? "/store" 
+      : isServiceProvider 
+        ? "/services/dashboard" 
+        : isDeliveryOrLegacy 
+          ? "/delivery" 
+          : null;
 
   return (
     <nav className="sticky top-0 z-50 flex items-center justify-between bg-white/95 px-6 py-3.5 shadow-sm backdrop-blur-md border-b border-gray-100">
@@ -36,17 +46,17 @@ export function PublicNavbar() {
         <Link href="/pricing" className="rounded-lg px-4 py-2 text-gray-600 hover:text-[#7158E2] hover:bg-purple-50 transition">
           Services
         </Link>
-        <Link href="/shop" className="rounded-lg px-4 py-2 text-gray-600 hover:text-[#7158E2] hover:bg-purple-50 transition">
+        <Link href="/area" className="rounded-lg px-4 py-2 text-gray-600 hover:text-[#7158E2] hover:bg-purple-50 transition">
           Your Area
         </Link>
 
-        {isLoggedIn && role === "user" && (
+        {isLoggedIn && (
           <Link href="/orders" className="rounded-lg px-4 py-2 text-gray-600 hover:text-[#7158E2] hover:bg-purple-50 transition">
             Orders
           </Link>
         )}
 
-        {isLoggedIn && (role === "vendor" || role === "admin") && dashboardHref && (
+        {isLoggedIn && dashboardHref && (
           <Link href={dashboardHref} className="rounded-lg px-4 py-2 text-[#7158E2] font-semibold hover:bg-purple-50 transition">
             {role === "admin" ? "🛡️ Admin" : "🏪 Dashboard"}
           </Link>
@@ -57,10 +67,13 @@ export function PublicNavbar() {
       <div className="hidden md:flex items-center gap-3">
         {isLoggedIn ? (
           <>
-            {role === "user" && (
-              <Link href="/cart" className="flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm text-gray-600 border border-gray-200 hover:border-[#7158E2] hover:text-[#7158E2] transition">
-                <ShoppingCartIcon className="h-4 w-4" />
-                Cart
+            <Link href="/cart" className="flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm text-gray-600 border border-gray-200 hover:border-[#7158E2] hover:text-[#7158E2] transition">
+              <ShoppingCartIcon className="h-4 w-4" />
+              Cart
+            </Link>
+            {(!isVendorOrLegacy && !isServiceProvider) && (
+              <Link href="/login?mode=register&role=vendor" className="hidden lg:block text-xs font-semibold text-orange-500 hover:underline">
+                Unlock Seller Portal
               </Link>
             )}
             <span className="text-sm font-medium text-gray-700">{userName}</span>
@@ -72,11 +85,11 @@ export function PublicNavbar() {
         ) : (
           <>
             <Link href="/login" className="rounded-lg px-4 py-2 text-sm font-semibold text-gray-600 hover:text-[#7158E2] transition">
-              Login
+              Sign In
             </Link>
-            <Link href="/create-store"
+            <Link href="/login?mode=register&role=vendor"
               className="rounded-lg border-2 border-[#7158E2] px-5 py-2 text-sm font-semibold text-[#7158E2] hover:bg-[#7158E2] hover:text-white transition shadow-sm">
-              Vendor Login
+              Sell on Baazaarse
             </Link>
           </>
         )}
@@ -99,8 +112,8 @@ export function PublicNavbar() {
         <div className="absolute top-full left-0 right-0 mt-1 flex flex-col gap-1 rounded-2xl border border-gray-100 bg-white p-4 shadow-xl md:hidden z-50">
           <Link href="/shop" onClick={() => setIsMobileMenuOpen(false)} className="rounded-xl px-4 py-3 text-sm font-medium text-gray-600 hover:bg-purple-50 hover:text-[#7158E2]">Shops</Link>
           <Link href="/pricing" onClick={() => setIsMobileMenuOpen(false)} className="rounded-xl px-4 py-3 text-sm font-medium text-gray-600 hover:bg-purple-50 hover:text-[#7158E2]">Services</Link>
-          <Link href="/shop" onClick={() => setIsMobileMenuOpen(false)} className="rounded-xl px-4 py-3 text-sm font-medium text-gray-600 hover:bg-purple-50 hover:text-[#7158E2]">Your Area</Link>
-          {isLoggedIn && role === "user" && (
+          <Link href="/area" onClick={() => setIsMobileMenuOpen(false)} className="rounded-xl px-4 py-3 text-sm font-medium text-gray-600 hover:bg-purple-50 hover:text-[#7158E2]">Your Area</Link>
+          {isLoggedIn && (
             <>
               <Link href="/orders" onClick={() => setIsMobileMenuOpen(false)} className="rounded-xl px-4 py-3 text-sm font-medium text-gray-600 hover:bg-purple-50 hover:text-[#7158E2]">Orders</Link>
               <Link href="/cart" onClick={() => setIsMobileMenuOpen(false)} className="rounded-xl px-4 py-3 text-sm font-medium text-gray-600 hover:bg-purple-50 hover:text-[#7158E2]">Cart</Link>
@@ -112,13 +125,18 @@ export function PublicNavbar() {
           <div className="mt-2 border-t border-gray-100 pt-3 flex flex-col gap-2">
             {isLoggedIn ? (
               <>
+                {(!isVendorOrLegacy && !isServiceProvider) && (
+                  <Link href="/login?mode=register&role=vendor" className="px-4 py-2 text-sm font-semibold text-orange-500">
+                    Unlock Seller Portal
+                  </Link>
+                )}
                 <span className="px-4 py-2 text-sm font-medium text-gray-700">{userName}</span>
                 <button onClick={() => { setIsMobileMenuOpen(false); handleLogout(); }} className="rounded-xl border border-red-200 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 text-left">Logout</button>
               </>
             ) : (
               <>
-                <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="rounded-xl px-4 py-2.5 text-sm font-semibold text-gray-600 hover:bg-purple-50 hover:text-[#7158E2]">Login</Link>
-                <Link href="/create-store" onClick={() => setIsMobileMenuOpen(false)} className="rounded-xl border-2 border-[#7158E2] px-4 py-2.5 text-sm font-semibold text-[#7158E2] text-center hover:bg-[#7158E2] hover:text-white">Vendor Login</Link>
+                <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="rounded-xl px-4 py-2.5 text-sm font-semibold text-gray-600 hover:bg-purple-50 hover:text-[#7158E2]">Sign In</Link>
+                <Link href="/login?mode=register&role=vendor" onClick={() => setIsMobileMenuOpen(false)} className="rounded-xl border-2 border-[#7158E2] px-4 py-2.5 text-sm font-semibold text-[#7158E2] text-center hover:bg-[#7158E2] hover:text-white">Sell on Baazaarse</Link>
               </>
             )}
           </div>

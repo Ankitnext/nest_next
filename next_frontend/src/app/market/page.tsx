@@ -181,6 +181,58 @@ export default function MarketPage() {
           }`}>{msg}</div>
         )}
 
+        {/* 3D Billboard / Hero Section */}
+        {tab === "browse" && products.some(p => p.name.toLowerCase().includes("bill board") || p.name.toLowerCase().includes("billboard")) && (
+          <div className="relative overflow-hidden rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl group">
+            <div className="absolute inset-0 bg-gradient-to-r from-violet-600/20 to-transparent pointer-events-none" />
+            
+            {products.filter(p => p.name.toLowerCase().includes("bill board") || p.name.toLowerCase().includes("billboard")).map(p => (
+              <div key={p.id} className="relative flex flex-col md:flex-row items-center gap-8 p-8 md:p-12">
+                <div className="flex-1 space-y-6">
+                  <div className="inline-flex items-center gap-2 rounded-full border border-violet-400/30 bg-violet-400/10 px-3 py-1 text-xs font-bold text-violet-300 uppercase tracking-widest">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-violet-500" />
+                    </span>
+                    Admin Choice
+                  </div>
+                  <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight">
+                    {p.name}
+                  </h2>
+                  <p className="text-lg text-slate-400 max-w-xl leading-relaxed">
+                    {p.description}
+                  </p>
+                  <div className="flex items-center gap-6">
+                    <div className="flex flex-col">
+                      <span className="text-sm text-slate-500 font-medium">Wholesale Price</span>
+                      <span className="text-3xl font-bold text-orange-500">{asCurrency(parseFloat(p.price))}</span>
+                    </div>
+                    <button onClick={() => handleBuy(p.id)} disabled={buying === p.id || p.stock_count === 0}
+                      className="rounded-full bg-white px-8 py-3.5 text-sm font-black text-slate-900 hover:bg-violet-400 hover:text-white transition-all transform hover:scale-105 shadow-xl disabled:opacity-50">
+                      {buying === p.id ? "Ordering..." : "ADVERTISE NOW"}
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="relative w-full md:w-1/3 aspect-square max-w-[320px]">
+                  <div className="absolute inset-0 bg-violet-500/20 blur-[80px] rounded-full" />
+                  {p.image ? (
+                    <img 
+                      src={p.image} 
+                      alt={p.name} 
+                      className="relative z-10 w-full h-full object-contain rounded-2xl transform rotate-3 group-hover:rotate-0 transition-transform duration-500 drop-shadow-[0_20px_50px_rgba(113,88,226,0.3)]" 
+                    />
+                  ) : (
+                    <div className="relative z-10 w-full h-full bg-slate-800 rounded-2xl flex items-center justify-center text-6xl shadow-inner border border-slate-700">
+                      🏢
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* ── Browse tab ── */}
         {tab === "browse" && (
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

@@ -23,11 +23,14 @@ import type { Product } from './app.service';
 import type { AddToCartDto } from './cart.service';
 
 interface JwtPayload {
-  sub: number;
+  sub: number | string;
   name: string;
   email: string;
   role: string;
   store?: string;
+  isVendor?: boolean;
+  isDelivery?: boolean;
+  isServiceProvider?: boolean;
 }
 
 function decodeToken(authHeader: string | undefined): JwtPayload {
@@ -44,8 +47,15 @@ function decodeToken(authHeader: string | undefined): JwtPayload {
 }
 
 function requireRole(payload: JwtPayload, ...roles: string[]): void {
-  if (!roles.includes(payload.role)) {
-    throw new ForbiddenException(`Access restricted to: ${roles.join(', ')}`);
+  const accountRole = payload.role;
+  const hasDirectRole = roles.includes(accountRole);
+  const hasCapability = 
+    (roles.includes("vendor") && payload.isVendor) ||
+    (roles.includes("delivery") && payload.isDelivery) ||
+    (roles.includes("service_provider") && payload.isServiceProvider);
+
+  if (!hasDirectRole && !hasCapability) {
+    throw new ForbiddenException(`Access restricted to: ${roles.join(", ")}`);
   }
 }
 
@@ -318,20 +328,20 @@ export class AppController {
   @Get('cart')
   async getCart(@Headers('authorization') auth: string) {
     const { sub } = decodeToken(auth);
-    return this.cartService.getCart(sub);
+    return this.cartService.getCart(sub as any);
   }
 
   @Post('cart')
   async addToCart(@Headers('authorization') auth: string, @Body() body: AddToCartDto) {
     const { sub } = decodeToken(auth);
     if (!body.product_id || !body.product_name) throw new BadRequestException('product_id and product_name required');
-    return this.cartService.addToCart(sub, body);
+    return this.cartService.addToCart(sub as any, body);
   }
 
   @Delete('cart/:productId')
   async removeFromCart(@Headers('authorization') auth: string, @Param('productId', ParseIntPipe) productId: number) {
     const { sub } = decodeToken(auth);
-    return this.cartService.removeFromCart(sub, productId);
+    return this.cartService.removeFromCart(sub as any, productId);
   }
 
   // ── Orders (user) ─────────────────────────────────────────────────────────
@@ -339,7 +349,7 @@ export class AppController {
   @Get('orders')
   async getOrders(@Headers('authorization') auth: string) {
     const { sub } = decodeToken(auth);
-    return this.orderService.getOrders(sub);
+    return this.orderService.getOrders(sub as any);
   }
 
   @Post('orders/:cartItemId')
@@ -350,7 +360,7 @@ export class AppController {
     @Body('fulfillmentType') fulfillmentType: string = 'delivery',
   ) {
     const { sub } = decodeToken(auth);
-    return this.orderService.placeOrder(sub, cartItemId, paymentMethod, fulfillmentType);
+    return this.orderService.placeOrder(sub as any, cartItemId, paymentMethod, fulfillmentType);
   }
 
   @Get('orders/priority-queue-count')
@@ -369,7 +379,7 @@ export class AppController {
   ) {
     const { sub } = decodeToken(auth);
     if (!paymentMethod || !fulfillmentType) throw new BadRequestException('paymentMethod and fulfillmentType are required');
-    return this.orderService.checkoutCart(sub, paymentMethod, fulfillmentType, fulfillmentDetails, isPriority);
+    return this.orderService.checkoutCart(sub as any, paymentMethod, fulfillmentType, fulfillmentDetails, isPriority);
   }
 
   @Post('orders/checkout/razorpay-init')
@@ -380,7 +390,7 @@ export class AppController {
   ) {
     const { sub } = decodeToken(auth);
     if (!fulfillmentType) throw new BadRequestException('fulfillmentType is required');
-    return this.orderService.createCartRazorpayOrder(sub, fulfillmentType, isPriority);
+    return this.orderService.createCartRazorpayOrder(sub as any, fulfillmentType, isPriority);
   }
 
   @Post('orders/checkout/razorpay-verify')
@@ -395,7 +405,7 @@ export class AppController {
   ) {
     const { sub } = decodeToken(auth);
     return this.orderService.verifyCartRazorpayPayment(
-      sub,
+      sub as any,
       fulfillmentType,
       fulfillmentDetails,
       isPriority,
@@ -408,13 +418,13 @@ export class AppController {
   @Patch('orders/:orderId/advance')
   async advanceStatus(@Headers('authorization') auth: string, @Param('orderId', ParseIntPipe) orderId: number) {
     const { sub } = decodeToken(auth);
-    return this.orderService.advanceStatus(sub, orderId);
+    return this.orderService.advanceStatus(sub as any, orderId);
   }
 
   @Post('orders/:orderId/create-razorpay-order')
   async createRazorpayOrder(@Headers('authorization') auth: string, @Param('orderId', ParseIntPipe) orderId: number) {
     const { sub } = decodeToken(auth);
-    return this.orderService.createRazorpayOrder(sub, orderId);
+    return this.orderService.createRazorpayOrder(sub as any, orderId);
   }
 
   @Post('orders/:orderId/pay')
@@ -426,7 +436,7 @@ export class AppController {
     @Body('razorpaySignature') razorpaySignature: string,
   ) {
     const { sub } = decodeToken(auth);
-    return this.orderService.payForOrder(sub, orderId, razorpayPaymentId, razorpayOrderId, razorpaySignature);
+    return this.orderService.payForOrder(sub as any, orderId, razorpayPaymentId, razorpayOrderId, razorpaySignature);
   }
 
   /** User confirms delivery — sets order status to "delivered" */
@@ -440,7 +450,7 @@ export class AppController {
       [orderId],
     );
     if (!order) throw new NotFoundException(`Order ${orderId} not found`);
-    if (order.user_id !== sub) throw new ForbiddenException('Not your order');
+    if (order.user_id !== (sub as any)) throw new ForbiddenException('Not your order');
     if (order.status === 'delivered') {
       return order; // already done, idempotent
     }
@@ -455,7 +465,7 @@ export class AppController {
   async getCheckoutFulfillmentOptions(@Headers('authorization') auth: string) {
     const { sub } = decodeToken(auth);
     // 1. Get the user's cart
-    const cartItems = await this.cartService.getCart(sub);
+    const cartItems = await this.cartService.getCart(sub as any);
     if (cartItems.length === 0) {
       return { delivery: true, pickup: true, table: true, queue: true }; // default if empty
     }
@@ -500,7 +510,7 @@ export class AppController {
     const p = decodeToken(auth);
     requireRole(p, 'vendor');
     const [user] = await this.databaseService.query(
-      `SELECT policy_delivery, policy_pickup, policy_table, policy_queue, allow_delivery, allow_pickup, allow_table, allow_queue, is_open, store_address FROM users WHERE id = $1`, [p.sub]
+      `SELECT policy_delivery, policy_pickup, policy_table, policy_queue, allow_delivery, allow_pickup, allow_table, allow_queue, is_open, store_address, gst_number, aadhar_number, shop_image, verification_status FROM users WHERE id = $1`, [p.sub]
     );
     if (!user) throw new NotFoundException('Vendor not found');
     return user;
@@ -520,6 +530,9 @@ export class AppController {
       allow_queue?: boolean;
       is_open?: boolean;
       store_address?: string;
+      gst_number?: string;
+      aadhar_number?: string;
+      shop_image?: string;
     }
   ) {
     const p = decodeToken(auth);
@@ -530,6 +543,29 @@ export class AppController {
         throw new BadRequestException('Policies must be pay_before or pay_after');
       }
     }
+
+    let verificationStatusUpdate = '';
+    const params: any[] = [
+      body.policy_delivery ?? null, 
+      body.policy_pickup ?? null, 
+      body.policy_table ?? null, 
+      body.policy_queue ?? null, 
+      body.allow_delivery ?? null, 
+      body.allow_pickup ?? null, 
+      body.allow_table ?? null, 
+      body.allow_queue ?? null, 
+      body.is_open ?? null,
+      body.store_address ?? null,
+      body.gst_number ?? null,
+      body.aadhar_number ?? null,
+      body.shop_image ?? null
+    ];
+
+    if (body.gst_number !== undefined || body.aadhar_number !== undefined || body.shop_image !== undefined) {
+      verificationStatusUpdate = `, verification_status = 'pending'`;
+    }
+
+    params.push(p.sub); // final parameter ($14)
 
     await this.databaseService.query(
       `UPDATE users 
@@ -542,21 +578,13 @@ export class AppController {
            allow_table     = COALESCE($7, allow_table),
            allow_queue     = COALESCE($8, allow_queue),
            is_open         = COALESCE($9, is_open),
-           store_address   = COALESCE($10, store_address)
-       WHERE id = $11`,
-      [
-        body.policy_delivery ?? null, 
-        body.policy_pickup ?? null, 
-        body.policy_table ?? null, 
-        body.policy_queue ?? null, 
-        body.allow_delivery ?? null, 
-        body.allow_pickup ?? null, 
-        body.allow_table ?? null, 
-        body.allow_queue ?? null, 
-        body.is_open ?? null,
-        body.store_address ?? null,
-        p.sub
-      ]
+           store_address   = COALESCE($10, store_address),
+           gst_number      = COALESCE($11, gst_number),
+           aadhar_number   = COALESCE($12, aadhar_number),
+           shop_image      = COALESCE($13, shop_image)
+           ${verificationStatusUpdate}
+       WHERE id = $14`,
+      params
     );
     return { success: true };
   }
@@ -595,6 +623,63 @@ export class AppController {
   }
 
   // NOTE: GET /api/vendor/products is handled by listVendorProducts above (line ~231) which correctly queries the DB.
+
+  // ── Admin ─────────────────────────────────────────────────────────────────
+
+  @Get('admin/vendors/verifications')
+  async getVendorVerifications(@Headers('authorization') auth: string) {
+    const p = decodeToken(auth);
+    requireRole(p, 'admin');
+
+    // Fetch all vendors who have a non-null verification status
+    type Row = {
+      id: number;
+      name: string;
+      email: string;
+      vendor_store: string;
+      gst_number: string;
+      aadhar_number: string;
+      shop_image: string;
+      verification_status: string;
+      created_at: string;
+    };
+
+    const vendors = await this.databaseService.query<Row>(
+      `SELECT id, name, email, vendor_store, gst_number, aadhar_number, shop_image, verification_status, created_at 
+       FROM users 
+       WHERE role = 'vendor' AND verification_status != 'unverified'
+       ORDER BY 
+         CASE WHEN verification_status = 'pending' THEN 1 ELSE 2 END,
+         created_at DESC`
+    );
+
+    return vendors;
+  }
+
+  @Patch('admin/vendors/:id/verify')
+  async verifyVendor(
+    @Headers('authorization') auth: string,
+    @Param('id', ParseIntPipe) id: number,
+    @Body('status') status: string
+  ) {
+    const p = decodeToken(auth);
+    requireRole(p, 'admin');
+
+    if (!['approved', 'rejected'].includes(status)) {
+      throw new BadRequestException('Status must be approved or rejected');
+    }
+
+    const [updated] = await this.databaseService.query(
+      `UPDATE users SET verification_status = $1 WHERE id = $2 AND role = 'vendor' RETURNING id`,
+      [status, id]
+    );
+
+    if (!updated) {
+      throw new NotFoundException('Vendor not found');
+    }
+
+    return { success: true, status };
+  }
 
   // ── Delivery Boy ──────────────────────────────────────────────────────────
 

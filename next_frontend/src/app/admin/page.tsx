@@ -26,6 +26,18 @@ interface RegisteredUser {
   order_count: number; total_spent: number; joined: string;
 }
 
+interface VendorVerification {
+  id: number;
+  name: string;
+  email: string;
+  vendor_store: string;
+  gst_number: string;
+  aadhar_number: string;
+  shop_image: string;
+  verification_status: string;
+  created_at: string;
+}
+
 interface ProductBreakdown {
   product_id: number; product_name: string; product_image: string;
   qty: number; revenue?: number; spent?: number;
@@ -142,7 +154,7 @@ interface StoreGroup {
 
 // ── Main Page ───────────────────────────────────────────────────────────────
 
-type Tab = "vendors" | "users" | "markets" | "market" | "ar";
+type Tab = "vendors" | "users" | "markets" | "market" | "ar" | "verifications";
 
 function AdminContent() {
   const { userName } = useAuth();
@@ -151,6 +163,7 @@ function AdminContent() {
   const [vendors,  setVendors]  = useState<RegisteredVendor[]>([]);
   const [users,    setUsers]    = useState<RegisteredUser[]>([]);
   const [markets,  setMarkets]  = useState<StoreGroup[]>([]);
+  const [verifs,   setVerifs]   = useState<VendorVerification[]>([]);
   const [tab,      setTab]      = useState<Tab>(() => (params.get("tab") as Tab) ?? "vendors");
   const [search,   setSearch]   = useState("");
   const [loading,  setLoading]  = useState(true);
@@ -174,10 +187,12 @@ function AdminContent() {
       fetch(`${API}/admin/registered-vendors`, { headers: h }).then(r => r.json()),
       fetch(`${API}/admin/users`,              { headers: h }).then(r => r.json()),
       fetch(`${API}/products`).then(r => r.json()),
+      fetch(`${API}/admin/vendors/verifications`, { headers: h }).then(r => r.json()),
     ])
-      .then(([v, u, prods]) => {
+      .then(([v, u, prods, verifData]) => {
         setVendors(Array.isArray(v)     ? v     as RegisteredVendor[] : []);
         setUsers(Array.isArray(u)       ? u     as RegisteredUser[]   : []);
+        setVerifs(Array.isArray(verifData) ? verifData as VendorVerification[] : []);
         // Group products by store
         const allProds: Product[] = Array.isArray(prods) ? prods as Product[] : [];
         const storeMap: Record<string, Product[]> = {};
@@ -213,6 +228,22 @@ function AdminContent() {
       setDrillData({ id, type: "user", total_orders: d.total_orders, total: d.total_spent, products: d.products });
     }
     setDrillLoad(false);
+  }
+
+  async function handleVerify(id: number, status: "approved" | "rejected") {
+    try {
+      const res = await fetch(`${API}/admin/vendors/${id}/verify`, {
+        method: "PATCH",
+        headers: H(),
+        body: JSON.stringify({ status })
+      });
+      if (!res.ok) throw new Error("Failed to verify vendor");
+      
+      setVerifs(prev => prev.map(v => v.id === id ? { ...v, verification_status: status } : v));
+      // Refresh vendor list slightly to reflect the change if needed
+    } catch (err: any) {
+      alert(err.message);
+    }
   }
 
   // Summary KPIs
@@ -259,6 +290,7 @@ function AdminContent() {
             { key: "vendors", label: `🏪 Vendors (${vendors.length})` },
             { key: "users",   label: `👤 Users (${users.length})` },
             { key: "markets", label: `🏬 Markets (${markets.length})` },
+            { key: "verifications", label: `✅ Verifications (${verifs.filter(v => v.verification_status === "pending").length})` },
             { key: "market",  label: "🛍️ Vendor Market" },
             { key: "ar",      label: "🕶️ AR Models" },
           ] as { key: Tab; label: string }[]).map(t => (
@@ -475,6 +507,80 @@ function AdminContent() {
             className="inline-block rounded-full bg-sky-500 px-8 py-3 text-sm font-bold text-white hover:bg-sky-400 transition shadow-lg shadow-sky-500/20">
             Open AR Console →
           </a>
+        </div>
+      )}
+
+      {/* ── Verifications ──────────────────────────────────────────────────────── */}
+      {!loading && tab === "verifications" && (
+        <div className="space-y-4">
+          {verifs.length === 0 ? (
+            <div className="rounded-2xl border border-slate-200/60 bg-white/60 px-5 py-10 text-center">
+              <p className="text-3xl mb-2">✅</p>
+              <p className="text-slate-600 font-medium">No pending verifications</p>
+            </div>
+          ) : verifs.map(v => (
+            <div key={v.id} className="rounded-2xl border border-slate-200/60 bg-white/60 p-5 overflow-hidden flex flex-col md:flex-row gap-6">
+              {/* Image Section */}
+              <div className="w-full md:w-48 h-32 rounded-xl bg-slate-100 flex-shrink-0 overflow-hidden relative">
+                {v.shop_image ? (
+                  <img src={v.shop_image} alt={v.vendor_store} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-slate-400 text-xs">No Shop Image</div>
+                )}
+                <div className="absolute top-2 left-2">
+                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider
+                      ${v.verification_status === 'approved' ? 'bg-green-500 text-white' :
+                        v.verification_status === 'rejected' ? 'bg-red-500 text-white' :
+                        'bg-amber-500 text-white'}`
+                    }>
+                      {v.verification_status}
+                    </span>
+                </div>
+              </div>
+
+              {/* Info Section */}
+              <div className="flex-1 min-w-0 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                    {v.name}
+                    <span className="text-xs font-semibold text-orange-500 bg-orange-50 px-2 py-0.5 rounded-full border border-orange-200">
+                      🏪 {v.vendor_store}
+                    </span>
+                  </h3>
+                  <p className="text-sm text-slate-500 mt-1">{v.email}</p>
+                </div>
+                
+                <div className="grid sm:grid-cols-2 gap-4 mt-4">
+                  <div className="rounded-xl bg-slate-50 border border-slate-200 p-3">
+                    <p className="text-[10px] uppercase font-bold text-slate-400 mb-0.5">GST Number</p>
+                    <p className="text-sm font-mono text-slate-800">{v.gst_number || "Not Provided"}</p>
+                  </div>
+                  <div className="rounded-xl bg-slate-50 border border-slate-200 p-3">
+                    <p className="text-[10px] uppercase font-bold text-slate-400 mb-0.5">Aadhar Number</p>
+                    <p className="text-sm font-mono text-slate-800">{v.aadhar_number || "Not Provided"}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Section */}
+              {v.verification_status === "pending" && (
+                <div className="flex flex-row md:flex-col justify-center gap-2 border-t md:border-t-0 md:border-l border-slate-100 pt-4 md:pt-0 md:pl-6 w-full md:w-40 flex-shrink-0">
+                  <button 
+                    onClick={() => handleVerify(v.id, "approved")}
+                    className="flex-1 md:flex-none rounded-xl bg-green-500 hover:bg-green-400 text-white text-sm font-bold py-2.5 transition active:scale-95 shadow-sm shadow-green-200"
+                  >
+                    Approve
+                  </button>
+                  <button 
+                    onClick={() => handleVerify(v.id, "rejected")}
+                    className="flex-1 md:flex-none rounded-xl bg-slate-100 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 text-slate-600 hover:text-rose-500 text-sm font-bold py-2.5 transition active:scale-95"
+                  >
+                    Reject
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       )}
 

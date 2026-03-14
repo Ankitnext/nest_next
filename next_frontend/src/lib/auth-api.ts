@@ -11,6 +11,9 @@ type RegisterPayload = {
   vendor_store?: string;
   phone?: string;
   vehicle_type?: string;
+  service_type?: string;
+  experience?: string;
+  hourly_rate?: number;
 };
 
 export async function loginRequest(payload: LoginPayload): Promise<{ token: string; role: string }> {
@@ -36,6 +39,9 @@ export async function registerRequest(payload: RegisterPayload): Promise<{ token
       vendor_store: payload.vendor_store,
       phone:        payload.phone,
       vehicle_type: payload.vehicle_type,
+      service_type: payload.service_type,
+      experience:   payload.experience,
+      hourlyRate:   payload.hourly_rate,
     }),
   });
   const data = (await res.json()) as { token?: string; role?: string; message?: string };

@@ -53,6 +53,10 @@ export default function VendorSettings() {
       setSettings(prev => ({ ...prev, ...updates }));
       setMsg("Settings saved successfully!");
       setTimeout(() => setMsg(""), 3000);
+      // Optimistically update the badge to 'pending' if they updated verification info
+      if (updates.gst_number || updates.aadhar_number || updates.shop_image) {
+        setSettings(prev => ({ ...prev, verification_status: 'pending' }));
+      }
     } catch (err: any) {
       setMsg(err.message);
     } finally {
@@ -205,8 +209,64 @@ export default function VendorSettings() {
               handleSaveSettings({ store_address: e.target.value });
             }}
             disabled={saving}
-            className="w-full rounded-xl border border-slate-200 bg-white/50 p-4 text-sm text-white placeholder-slate-500 focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500"
+            className="w-full rounded-xl border border-slate-200 bg-white/50 p-4 text-sm text-cyan-900 placeholder-slate-500 focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500"
           />
+        </div>
+      </div>
+
+      {/* Verification Data Section */}
+      <div className="rounded-2xl border border-slate-200/60 bg-white/40 p-6 md:p-8 relative mt-8">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-slate-900">Verification Details</h2>
+          <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider
+            ${settings.verification_status === 'approved' ? 'bg-green-100 text-green-700' :
+              settings.verification_status === 'rejected' ? 'bg-red-100 text-red-700' :
+              settings.verification_status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+              'bg-slate-200 text-slate-600'}`
+          }>
+            {settings.verification_status || 'Unverified'}
+          </span>
+        </div>
+        <p className="text-sm text-slate-500 mb-6 max-w-xl">
+          Enter your formal business and identity details to get your store verified. Updating these fields will submit them for admin review.
+        </p>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">GST Number</label>
+            <input
+              type="text"
+              placeholder="E.g. 29ABCDE1234F1Z5"
+              value={settings.gst_number || ""}
+              onChange={(e) => setSettings({ ...settings, gst_number: e.target.value })}
+              onBlur={(e) => handleSaveSettings({ gst_number: e.target.value })}
+              disabled={saving}
+              className="w-full rounded-xl border border-slate-200 bg-white/50 p-3 text-sm text-cyan-900 focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Aadhar Number</label>
+            <input
+              type="text"
+              placeholder="12-digit Aadhar (e.g. 1234 5678 9012)"
+              value={settings.aadhar_number || ""}
+              onChange={(e) => setSettings({ ...settings, aadhar_number: e.target.value })}
+              onBlur={(e) => handleSaveSettings({ aadhar_number: e.target.value })}
+              disabled={saving}
+              className="w-full rounded-xl border border-slate-200 bg-white/50 p-3 text-sm text-cyan-900 focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Shop Image URL</label>
+            <input
+              type="url"
+              placeholder="https://example.com/shop.jpg"
+              value={settings.shop_image || ""}
+              onChange={(e) => setSettings({ ...settings, shop_image: e.target.value })}
+              onBlur={(e) => handleSaveSettings({ shop_image: e.target.value })}
+              disabled={saving}
+              className="w-full rounded-xl border border-slate-200 bg-white/50 p-3 text-sm text-cyan-900 focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500"
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -41,6 +41,14 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
 
       ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(10) NOT NULL DEFAULT 'user';
       ALTER TABLE users ADD COLUMN IF NOT EXISTS vendor_store VARCHAR(120);
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR(20);
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS is_vendor BOOLEAN NOT NULL DEFAULT false;
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS is_service_provider BOOLEAN NOT NULL DEFAULT false;
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS is_delivery BOOLEAN NOT NULL DEFAULT false;
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS service_type VARCHAR(120);
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS experience VARCHAR(50);
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS hourly_rate NUMERIC(10,2);
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS vehicle_type VARCHAR(60);
       ALTER TABLE users DROP COLUMN IF EXISTS payment_policy;
       ALTER TABLE users ADD COLUMN IF NOT EXISTS policy_delivery VARCHAR(20) NOT NULL DEFAULT 'pay_after';
       ALTER TABLE users ADD COLUMN IF NOT EXISTS policy_pickup VARCHAR(20) NOT NULL DEFAULT 'pay_after';
@@ -52,6 +60,11 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       ALTER TABLE users ADD COLUMN IF NOT EXISTS allow_queue BOOLEAN NOT NULL DEFAULT true;
       ALTER TABLE users ADD COLUMN IF NOT EXISTS is_open BOOLEAN NOT NULL DEFAULT true;
       ALTER TABLE users ADD COLUMN IF NOT EXISTS store_address VARCHAR(255);
+      
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS gst_number VARCHAR(50);
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS aadhar_number VARCHAR(50);
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS shop_image TEXT;
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_status VARCHAR(20) NOT NULL DEFAULT 'unverified';
 
       CREATE TABLE IF NOT EXISTS cart (
         id SERIAL PRIMARY KEY,
